@@ -1,21 +1,14 @@
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
-import { homedir } from 'os';
-import path from 'path';
 import chalk from 'chalk';
-
-const SSH_DIR = path.join(homedir(), '.ssh');
-const GS_CONFIG_PATH = path.join(SSH_DIR, 'gs-config.json');
+import {
+  getActiveConfigs,
+  formatConfigLine,
+  GSConfigItem,
+} from '../../utils/gs-config';
 
 export default async function test() {
-  if (!existsSync(GS_CONFIG_PATH)) {
-    console.log('暂无 SSH 配置');
-    return;
-  }
-
-  const configs = JSON.parse(readFileSync(GS_CONFIG_PATH, 'utf8'));
-  const activeConfigs = configs.filter((c: any) => !c.deleteTime);
+  const activeConfigs = getActiveConfigs();
 
   if (activeConfigs.length === 0) {
     console.log('暂无 SSH 配置');
@@ -27,11 +20,11 @@ export default async function test() {
       type: 'checkbox',
       name: 'selected',
       message: '请选择要测试的 SSH 配置(空格选中, a 全选):',
-      choices: activeConfigs.map((c: any) => ({
-        name: `${c.origin} | ${c.username} | ${c.useremail} | ${c.host} | ${c.keyType}`,
+      choices: activeConfigs.map((c: GSConfigItem) => ({
+        name: formatConfigLine(c),
         value: c,
       })),
-      default: activeConfigs.map((_: any, i: number) => i),
+      default: activeConfigs.map((_, i) => i),
     },
   ]);
 

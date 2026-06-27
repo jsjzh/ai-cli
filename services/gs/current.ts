@@ -1,16 +1,11 @@
 import { execSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
-import { homedir } from 'os';
-import path from 'path';
 import chalk from 'chalk';
-
-const SSH_DIR = path.join(homedir(), '.ssh');
-const GS_CONFIG_PATH = path.join(SSH_DIR, 'gs-config.json');
+import { getActiveConfigs, GSConfigItem } from '../../utils/gs-config';
+import { hasGitRepo } from '../../utils/git';
 
 export default async function current() {
-  const hasGit = existsSync(path.join(process.cwd(), '.git'));
-  const scope = hasGit ? 'local' : 'global';
-  const scopeFlag = hasGit ? '--local' : '--global';
+  const scope = hasGitRepo() ? 'local' : 'global';
+  const scopeFlag = hasGitRepo() ? '--local' : '--global';
 
   try {
     const name = execSync(`git config ${scopeFlag} user.name`, {
@@ -24,17 +19,14 @@ export default async function current() {
     let host = '-';
     let keyType = '-';
 
-    if (existsSync(GS_CONFIG_PATH)) {
-      const configs = JSON.parse(readFileSync(GS_CONFIG_PATH, 'utf8'));
-      const activeConfigs = configs.filter((c: any) => !c.deleteTime);
-      const match = activeConfigs.find(
-        (c: any) => c.username === name && c.useremail === email
-      );
-      if (match) {
-        origin = match.origin;
-        host = match.host;
-        keyType = match.keyType;
-      }
+    const activeConfigs = getActiveConfigs();
+    const match = activeConfigs.find(
+      (c: GSConfigItem) => c.username === name && c.useremail === email
+    );
+    if (match) {
+      origin = match.origin;
+      host = match.host;
+      keyType = match.keyType;
     }
 
     console.log(chalk.cyan(`\n当前 ${scope} 配置:\n`));

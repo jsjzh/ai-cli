@@ -1,35 +1,21 @@
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync, readFileSync, appendFileSync, writeFileSync } from 'fs';
-import { homedir } from 'os';
+import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'fs';
 import path from 'path';
-
-const SSH_DIR = path.join(homedir(), '.ssh');
-const CONFIG_PATH = path.join(SSH_DIR, 'config');
-const GS_CONFIG_PATH = path.join(SSH_DIR, 'gs-config.json');
-
-interface GSConfigItem {
-  origin: string;
-  username: string;
-  useremail: string;
-  host: string;
-  keyType: string;
-  publicKey: string;
-  deleteTime: string | null;
-}
-
-function readGSConfig(): GSConfigItem[] {
-  if (!existsSync(GS_CONFIG_PATH)) return [];
-  return JSON.parse(readFileSync(GS_CONFIG_PATH, 'utf8'));
-}
-
-function writeGSConfig(configs: GSConfigItem[]): void {
-  writeFileSync(GS_CONFIG_PATH, JSON.stringify(configs, null, 2));
-}
+import {
+  getSSHDir,
+  getConfigPath,
+  readGSConfig,
+  writeGSConfig,
+  GSConfigItem,
+} from '../../utils/gs-config';
 
 export default async function add() {
-  if (!existsSync(SSH_DIR)) {
-    mkdirSync(SSH_DIR, { recursive: true });
+  const sshDir = getSSHDir();
+  const configPath = getConfigPath();
+
+  if (!existsSync(sshDir)) {
+    mkdirSync(sshDir, { recursive: true });
   }
 
   const existingConfigs = readGSConfig();
@@ -77,7 +63,7 @@ export default async function add() {
     },
   ]);
 
-  const keyPath = path.join(SSH_DIR, answers.origin);
+  const keyPath = path.join(sshDir, answers.origin);
   const sshKeygenCmd =
     answers.keyType === 'ed25519'
       ? `ssh-keygen -t ed25519 -C "${answers.useremail}" -f "${keyPath}" -N ""`
@@ -99,7 +85,7 @@ Host ${answers.origin}
   User ${answers.username}
   IdentityFile ${keyPath}
 `;
-  appendFileSync(CONFIG_PATH, sshConfigEntry);
+  appendFileSync(configPath, sshConfigEntry);
 
   const newConfig: GSConfigItem = {
     origin: answers.origin,

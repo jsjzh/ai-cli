@@ -1,18 +1,7 @@
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
 import { existsSync, rmSync } from 'fs';
-
-const lockFiles: Record<string, string> = {
-  pnpm: 'pnpm-lock.yaml',
-  yarn: 'yarn.lock',
-  npm: 'package-lock.json',
-};
-
-function detectPackageManager(): string {
-  if (existsSync('pnpm-lock.yaml')) return 'pnpm';
-  if (existsSync('yarn.lock')) return 'yarn';
-  return 'npm';
-}
+import { detectPackageManager, lockFiles } from '../../utils/node';
 
 export default async function clean() {
   const pm = detectPackageManager();

@@ -1,12 +1,6 @@
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
-import { existsSync } from 'fs';
-
-function detectPackageManager(): string {
-  if (existsSync('pnpm-lock.yaml')) return 'pnpm';
-  if (existsSync('yarn.lock')) return 'yarn';
-  return 'npm';
-}
+import { detectPackageManager } from '../../utils/node';
 
 export default async function update() {
   const pm = detectPackageManager();

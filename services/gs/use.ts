@@ -1,20 +1,14 @@
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
-import { homedir } from 'os';
-import path from 'path';
-
-const SSH_DIR = path.join(homedir(), '.ssh');
-const GS_CONFIG_PATH = path.join(SSH_DIR, 'gs-config.json');
+import {
+  getActiveConfigs,
+  formatConfigLine,
+  GSConfigItem,
+} from '../../utils/gs-config';
+import { hasGitRepo } from '../../utils/git';
 
 export default async function use() {
-  if (!existsSync(GS_CONFIG_PATH)) {
-    console.log('暂无 SSH 配置');
-    return;
-  }
-
-  const configs = JSON.parse(readFileSync(GS_CONFIG_PATH, 'utf8'));
-  const activeConfigs = configs.filter((c: any) => !c.deleteTime);
+  const activeConfigs = getActiveConfigs();
 
   if (activeConfigs.length === 0) {
     console.log('暂无 SSH 配置');
@@ -26,17 +20,16 @@ export default async function use() {
       type: 'list',
       name: 'config',
       message: '请选择要使用的 SSH 配置:',
-      choices: activeConfigs.map((c: any) => ({
-        name: `${c.origin} | ${c.username} | ${c.useremail} | ${c.host} | ${c.keyType}`,
+      choices: activeConfigs.map((c: GSConfigItem) => ({
+        name: formatConfigLine(c),
         value: c,
       })),
     },
   ]);
 
-  const hasGit = existsSync(path.join(process.cwd(), '.git'));
   let scope = 'global';
 
-  if (hasGit) {
+  if (hasGitRepo()) {
     const { scopeChoice } = await inquirer.prompt([
       {
         type: 'list',
