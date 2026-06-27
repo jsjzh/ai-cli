@@ -1,17 +1,5 @@
 # CLI - 命令行工具集
 
-## 安装方法
-
-```bash
-npm install -g .
-```
-
-或使用 pnpm：
-
-```bash
-pnpm add -g .
-```
-
 ## 软链方式
 
 ```bash
