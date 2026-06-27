@@ -1,0 +1,23 @@
+{
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "命令行工具集",
+  "main": "dist/index.js",
+  "bin": {
+    "cli": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.7"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^8.2.13",
+    "@types/node": "^20.19.43",
+    "typescript": "^5.9.3"
+  }
+}
