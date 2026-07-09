@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 import chalk from 'chalk';
 import {
   getActiveConfigs,
@@ -36,7 +36,7 @@ export default async function test() {
   for (const config of selected) {
     console.log(chalk.cyan(`\n正在测试 ${config.origin}...`));
     try {
-      execSync(`ssh -T ${config.origin}`, {
+      exec(`ssh -T ${config.origin}`, {
         encoding: 'utf8',
         timeout: 10000,
         stdio: 'inherit',

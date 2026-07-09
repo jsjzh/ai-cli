@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 import { getCurrentBranch } from './pull';
 import Fuse from 'fuse.js';
 
@@ -7,7 +7,7 @@ export default async function pullAndMerge() {
   try {
     const originalBranch = getCurrentBranch();
 
-    const branches = execSync('git branch --format="%(refname:short)"', { encoding: 'utf8' })
+    const branches = exec('git branch --format="%(refname:short)"', { encoding: 'utf8' })
       .trim()
       .split('\n')
       .filter(b => b !== originalBranch);
@@ -43,29 +43,29 @@ export default async function pullAndMerge() {
       targetBranch = picked;
     }
 
-    const hasChanges = execSync('git status --porcelain', { encoding: 'utf8' }).trim().length > 0;
+    const hasChanges = exec('git status --porcelain', { encoding: 'utf8' }).trim().length > 0;
     if (hasChanges) {
       console.log('检测到未提交的更改，正在暂存...');
-      execSync('git stash', { stdio: 'inherit' });
+      exec('git stash', { stdio: 'inherit' });
     }
 
     console.log(`正在切换到分支: ${targetBranch}`);
-    execSync(`git checkout ${targetBranch}`, { stdio: 'inherit' });
+    exec(`git checkout ${targetBranch}`, { stdio: 'inherit' });
 
     console.log('正在拉取远程更新...');
-    execSync(`git pull origin ${targetBranch}`, { stdio: 'inherit' });
+    exec(`git pull origin ${targetBranch}`, { stdio: 'inherit' });
 
     console.log(`正在切换回分支: ${originalBranch}`);
-    execSync(`git checkout ${originalBranch}`, { stdio: 'inherit' });
+    exec(`git checkout ${originalBranch}`, { stdio: 'inherit' });
 
     console.log(`正在合并分支: ${targetBranch}`);
-    const headBefore = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
-    execSync(`git merge ${targetBranch}`, { stdio: 'inherit' });
-    const headAfter = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+    const headBefore = exec('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+    exec(`git merge ${targetBranch}`, { stdio: 'inherit' });
+    const headAfter = exec('git rev-parse HEAD', { encoding: 'utf8' }).trim();
 
     if (hasChanges) {
       console.log('正在恢复暂存的更改...');
-      execSync('git stash pop', { stdio: 'inherit' });
+      exec('git stash pop', { stdio: 'inherit' });
     }
 
     if (headBefore === headAfter) {
@@ -83,7 +83,7 @@ export default async function pullAndMerge() {
 
     if (shouldPush) {
       console.log('正在推送...');
-      execSync(`git push origin ${originalBranch}`, { stdio: 'inherit' });
+      exec(`git push origin ${originalBranch}`, { stdio: 'inherit' });
       console.log('推送成功');
     } else {
       console.log(`请记得推送提交 (git push origin ${originalBranch})`);

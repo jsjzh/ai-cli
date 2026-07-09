@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 import chalk from 'chalk';
 import { getActiveConfigs, GSConfigItem } from '../../utils/gs-config';
 import { hasGitRepo } from '../../utils/git';
@@ -8,10 +8,10 @@ export default async function current() {
   const scopeFlag = hasGitRepo() ? '--local' : '--global';
 
   try {
-    const name = execSync(`git config ${scopeFlag} user.name`, {
+    const name = exec(`git config ${scopeFlag} user.name`, {
       encoding: 'utf8',
     }).trim();
-    const email = execSync(`git config ${scopeFlag} user.email`, {
+    const email = exec(`git config ${scopeFlag} user.email`, {
       encoding: 'utf8',
     }).trim();
 

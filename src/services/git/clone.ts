@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 
 export default async function clone() {
   const answers = await inquirer.prompt([
@@ -48,7 +48,7 @@ export default async function clone() {
   }
 
   try {
-    execSync(cmd, { stdio: 'inherit' });
+    exec(cmd, { stdio: 'inherit' });
     const projectName =
       answers.name || answers.address.split('/').pop()!.replace('.git', '');
     console.log(`\n克隆成功！接下来可以执行: cd ${projectName}`);

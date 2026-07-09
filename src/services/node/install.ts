@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 import { detectPackageManager } from '../../utils/node';
 
 export default async function install() {
@@ -9,7 +9,7 @@ export default async function install() {
   console.log(`执行命令: ${cmd}\n`);
 
   try {
-    execSync(cmd, { stdio: 'inherit' });
+    exec(cmd, { stdio: 'inherit' });
     console.log(`\n依赖安装完成`);
   } catch (error) {
     console.error(`\n安装失败:`, (error as Error).message);

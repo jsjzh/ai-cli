@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'fs';
 import path from 'path';
 import {
@@ -70,7 +70,7 @@ export default async function add() {
       : `ssh-keygen -t rsa -b 4096 -C "${answers.useremail}" -f "${keyPath}" -N ""`;
 
   try {
-    execSync(sshKeygenCmd, { stdio: 'inherit' });
+    exec(sshKeygenCmd, { stdio: 'inherit' });
   } catch (error) {
     console.error('生成密钥失败:', (error as Error).message);
     return;

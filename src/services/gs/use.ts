@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 import {
   getActiveConfigs,
   formatConfigLine,
@@ -48,10 +48,10 @@ export default async function use() {
   const scopeFlag = scope === 'local' ? '--local' : '--global';
 
   try {
-    execSync(`git config ${scopeFlag} user.name "${config.username}"`, {
+    exec(`git config ${scopeFlag} user.name "${config.username}"`, {
       stdio: 'inherit',
     });
-    execSync(`git config ${scopeFlag} user.email "${config.useremail}"`, {
+    exec(`git config ${scopeFlag} user.email "${config.useremail}"`, {
       stdio: 'inherit',
     });
     console.log(`\n已在 ${scope} 范围设置 git config：`);

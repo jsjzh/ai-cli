@@ -1,41 +1,33 @@
 import inquirer from 'inquirer';
 import { exec } from '../../utils/exec';
-import pull, { getCurrentBranch } from './pull';
+import { hasGitRepo } from '../../utils/git';
+import { commitTypes } from './push';
 
-export const commitTypes = [
-  { name: 'feat: 新功能、新特性', value: 'feat' },
-  { name: 'fix: 修改 bug', value: 'fix' },
-  { name: 'perf: 更改代码，以提高性能', value: 'perf' },
-  { name: 'refactor: 代码重构', value: 'refactor' },
-  { name: 'docs: 文档修改', value: 'docs' },
-  { name: 'style: 代码格式修改, 注意不是 css 修改', value: 'style' },
-  { name: 'test: 测试用例新增、修改', value: 'test' },
-  { name: 'build: 影响项目构建或依赖项修改', value: 'build' },
-  { name: 'revert: 恢复上一次提交', value: 'revert' },
-  { name: 'ci: 持续集成相关文件修改', value: 'ci' },
-  { name: 'chore: 其他修改', value: 'chore' },
-  { name: 'release: 发布新版本', value: 'release' },
-  { name: 'workflow: 工作流相关文件修改', value: 'workflow' },
-];
-
-export default async function push() {
+export default async function initAndPush() {
   try {
-    const branch = getCurrentBranch();
-
-    console.log('正在拉取远程更新...');
-    try {
-      await pull();
-    } catch {
-      console.error('自动合并失败，请手动解决冲突后重试');
+    if (hasGitRepo()) {
+      console.log('当前项目已有 Git 配置，不能继续执行');
       return;
     }
 
     const answers = await inquirer.prompt([
       {
         type: 'input',
+        name: 'remote',
+        message: '请输入远端 Git 地址:',
+        validate: (v: string) => v.trim().length > 0 || '地址不能为空',
+      },
+      {
+        type: 'input',
+        name: 'branch',
+        message: '请输入要推送的分支:',
+        default: 'master',
+      },
+      {
+        type: 'input',
         name: 'content',
         message: '请输入提交内容:',
-        validate: (input: string) => (input ? true : '提交内容不能为空'),
+        default: 'init project',
       },
       {
         type: 'list',
@@ -55,6 +47,19 @@ export default async function push() {
         default: 'all',
       },
     ]);
+
+    console.log('正在初始化 Git 仓库...');
+    exec('git init', { stdio: 'inherit' });
+
+    exec(`git remote add origin ${answers.remote}`, { stdio: 'inherit' });
+
+    exec(`git checkout -b ${answers.branch}`, { stdio: 'inherit' });
+
+    const remoteHasContent = exec(`git ls-remote --heads origin ${answers.branch}`, { encoding: 'utf8' }).trim().length > 0;
+    if (remoteHasContent) {
+      console.log('远程仓库已有内容，正在拉取并合并...');
+      exec(`git pull origin ${answers.branch} --allow-unrelated-histories`, { stdio: 'inherit' });
+    }
 
     if (answers.scope === 'all') {
       exec('git add .', { stdio: 'inherit' });
@@ -93,9 +98,10 @@ export default async function push() {
     const commitMessage = `${answers.type}: ${answers.content}`;
     exec(`git commit -m "${commitMessage}"`, { stdio: 'inherit' });
 
-    exec(`git push origin ${branch}`, { stdio: 'inherit' });
+    console.log('正在推送...');
+    exec(`git push -u origin ${answers.branch}`, { stdio: 'inherit' });
 
-    console.log(`\nbranch ${branch} 提交成功，提交内容为：${commitMessage}`);
+    console.log(`\n推送成功，分支为: ${answers.branch}，提交内容为：${commitMessage}`);
   } catch (error) {
     console.error(`\n操作失败:`, (error as Error).message);
   }

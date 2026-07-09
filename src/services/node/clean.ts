@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 import { existsSync, rmSync } from 'fs';
 import { detectPackageManager, lockFiles } from '../../utils/node';
 
@@ -34,7 +34,7 @@ export default async function clean() {
 
     const installCmd = pm === 'yarn' ? 'yarn install' : `${pm} install`;
     console.log('正在重新安装依赖...');
-    execSync(installCmd, { stdio: 'inherit' });
+    exec(installCmd, { stdio: 'inherit' });
 
     console.log(`\n清除并重装完成`);
   } catch (error) {

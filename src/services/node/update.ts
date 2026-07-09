@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { execSync } from 'child_process';
+import { exec } from '../../utils/exec';
 import { detectPackageManager } from '../../utils/node';
 
 export default async function update() {
@@ -35,7 +35,7 @@ export default async function update() {
 
   try {
     console.log(`使用包管理器: ${pm}`);
-    execSync(updateCmd, { stdio: 'inherit', encoding: 'utf8' });
+    exec(updateCmd, { stdio: 'inherit', encoding: 'utf8' });
     console.log(`\n依赖更新完成`);
   } catch (error) {
     console.error(`\n更新失败:`, (error as Error).message);

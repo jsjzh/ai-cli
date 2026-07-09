@@ -3,6 +3,7 @@ import clone from '../services/git/clone';
 import pull from '../services/git/pull';
 import push from '../services/git/push';
 import pullAndMerge from '../services/git/pullAndMerge';
+import initAndPush from '../services/git/initAndPush';
 
 export default async function gitController() {
   const { action } = await inquirer.prompt([
@@ -15,6 +16,7 @@ export default async function gitController() {
         { name: 'pull - 拉取更新', value: 'pull' },
         { name: 'clone - 克隆项目', value: 'clone' },
         { name: 'pullAndMerge - 拉取并合并分支', value: 'pullAndMerge' },
+        { name: 'initAndPush - 初始化并推送', value: 'initAndPush' },
       ],
     },
   ]);
@@ -31,6 +33,9 @@ export default async function gitController() {
       break;
     case 'pullAndMerge':
       await pullAndMerge();
+      break;
+    case 'initAndPush':
+      await initAndPush();
       break;
   }
 }
