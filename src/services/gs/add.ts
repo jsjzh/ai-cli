@@ -56,8 +56,8 @@ export default async function add() {
       name: 'keyType',
       message: '请选择密钥类型:',
       choices: [
-        { name: 'ed25519 (推荐)', value: 'ed25519' },
-        { name: 'rsa', value: 'rsa' },
+        { name: '1. ed25519 (推荐)', value: 'ed25519' },
+        { name: '2. rsa', value: 'rsa' },
       ],
       default: 'ed25519',
     },

@@ -11,9 +11,9 @@ export default async function update() {
       name: 'depType',
       message: '请选择要更新的依赖类型:',
       choices: [
-        { name: 'all - 所有依赖', value: 'all' },
-        { name: 'dep - 生产依赖', value: 'dep' },
-        { name: 'devDep - 开发依赖', value: 'devDep' },
+        { name: '1. all - 所有依赖', value: 'all' },
+        { name: '2. dep - 生产依赖', value: 'dep' },
+        { name: '3. devDep - 开发依赖', value: 'devDep' },
       ],
       default: 'all',
     },

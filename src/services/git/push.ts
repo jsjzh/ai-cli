@@ -3,19 +3,19 @@ import { exec } from '../../utils/exec';
 import pull, { getCurrentBranch } from './pull';
 
 export const commitTypes = [
-  { name: 'feat: 新功能、新特性', value: 'feat' },
-  { name: 'fix: 修改 bug', value: 'fix' },
-  { name: 'perf: 更改代码，以提高性能', value: 'perf' },
-  { name: 'refactor: 代码重构', value: 'refactor' },
-  { name: 'docs: 文档修改', value: 'docs' },
-  { name: 'style: 代码格式修改, 注意不是 css 修改', value: 'style' },
-  { name: 'test: 测试用例新增、修改', value: 'test' },
-  { name: 'build: 影响项目构建或依赖项修改', value: 'build' },
-  { name: 'revert: 恢复上一次提交', value: 'revert' },
-  { name: 'ci: 持续集成相关文件修改', value: 'ci' },
-  { name: 'chore: 其他修改', value: 'chore' },
-  { name: 'release: 发布新版本', value: 'release' },
-  { name: 'workflow: 工作流相关文件修改', value: 'workflow' },
+  { name: '1. feat: 新功能、新特性', value: 'feat' },
+  { name: '2. fix: 修改 bug', value: 'fix' },
+  { name: '3. perf: 更改代码，以提高性能', value: 'perf' },
+  { name: '4. refactor: 代码重构', value: 'refactor' },
+  { name: '5. docs: 文档修改', value: 'docs' },
+  { name: '6. style: 代码格式修改, 注意不是 css 修改', value: 'style' },
+  { name: '7. test: 测试用例新增、修改', value: 'test' },
+  { name: '8. build: 影响项目构建或依赖项修改', value: 'build' },
+  { name: '9. revert: 恢复上一次提交', value: 'revert' },
+  { name: '10. ci: 持续集成相关文件修改', value: 'ci' },
+  { name: '11. chore: 其他修改', value: 'chore' },
+  { name: '12. release: 发布新版本', value: 'release' },
+  { name: '13. workflow: 工作流相关文件修改', value: 'workflow' },
 ];
 
 export default async function push() {
@@ -49,8 +49,8 @@ export default async function push() {
         name: 'scope',
         message: '请选择提交范围:',
         choices: [
-          { name: 'all - 提交所有变更', value: 'all' },
-          { name: 'select - 选择变更文件', value: 'select' },
+          { name: '1. all - 提交所有变更', value: 'all' },
+          { name: '2. select - 选择变更文件', value: 'select' },
         ],
         default: 'all',
       },

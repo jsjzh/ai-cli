@@ -10,9 +10,9 @@ export default async function nodeController() {
       name: 'action',
       message: '请选择 Node 操作',
       choices: [
-        { name: 'install - 安装依赖', value: 'install' },
-        { name: 'update - 更新依赖', value: 'update' },
-        { name: 'clean - 清除并重装依赖', value: 'clean' },
+        { name: '1. install - 安装依赖', value: 'install' },
+        { name: '2. update - 更新依赖', value: 'update' },
+        { name: '3. clean - 清除并重装依赖', value: 'clean' },
       ],
     },
   ]);

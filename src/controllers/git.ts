@@ -12,11 +12,11 @@ export default async function gitController() {
       name: 'action',
       message: '请选择 Git 操作',
       choices: [
-        { name: 'push - 提交推送', value: 'push' },
-        { name: 'pull - 拉取更新', value: 'pull' },
-        { name: 'clone - 克隆项目', value: 'clone' },
-        { name: 'pullAndMerge - 拉取并合并分支', value: 'pullAndMerge' },
-        { name: 'initAndPush - 初始化并推送', value: 'initAndPush' },
+        { name: '1. push - 提交推送', value: 'push' },
+        { name: '2. pull - 拉取更新', value: 'pull' },
+        { name: '3. clone - 克隆项目', value: 'clone' },
+        { name: '4. pullAndMerge - 拉取并合并分支', value: 'pullAndMerge' },
+        { name: '5. initAndPush - 初始化并推送', value: 'initAndPush' },
       ],
     },
   ]);

@@ -41,8 +41,8 @@ export default async function initAndPush() {
         name: 'scope',
         message: '请选择提交范围:',
         choices: [
-          { name: 'all - 提交所有变更', value: 'all' },
-          { name: 'select - 选择变更文件', value: 'select' },
+          { name: '1. all - 提交所有变更', value: 'all' },
+          { name: '2. select - 选择变更文件', value: 'select' },
         ],
         default: 'all',
       },

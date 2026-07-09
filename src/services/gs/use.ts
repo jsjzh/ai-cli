@@ -36,8 +36,8 @@ export default async function use() {
         name: 'scopeChoice',
         message: '请选择配置生效范围:',
         choices: [
-          { name: 'local - 仅当前项目', value: 'local' },
-          { name: 'global - 全局', value: 'global' },
+          { name: '1. local - 仅当前项目', value: 'local' },
+          { name: '2. global - 全局', value: 'global' },
         ],
         default: 'local',
       },

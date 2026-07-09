@@ -4,6 +4,7 @@ import inquirer from 'inquirer';
 import gitController from './controllers/git';
 import gsController from './controllers/gs';
 import nodeController from './controllers/node';
+import soucheController from './controllers/souche';
 
 async function main() {
   const { command } = await inquirer.prompt([
@@ -12,9 +13,10 @@ async function main() {
       name: 'command',
       message: '请选择要执行的命令',
       choices: [
-        { name: 'git - Git 操作', value: 'git' },
-        { name: 'gs - Git SSH 配置管理', value: 'gs' },
-        { name: 'node - Node.js 包管理', value: 'node' },
+        { name: '1. git - Git 操作', value: 'git' },
+        { name: '2. gs - Git SSH 配置管理', value: 'gs' },
+        { name: '3. node - Node.js 包管理', value: 'node' },
+        { name: '4. souche - Souche 内部工具', value: 'souche' },
       ],
     },
   ]);
@@ -28,6 +30,9 @@ async function main() {
       break;
     case 'node':
       await nodeController();
+      break;
+    case 'souche':
+      await soucheController();
       break;
   }
 }
