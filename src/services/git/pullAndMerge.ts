@@ -1,6 +1,7 @@
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
 import { getCurrentBranch } from './pull';
+import Fuse from 'fuse.js';
 
 export default async function pullAndMerge() {
   try {
@@ -16,14 +17,31 @@ export default async function pullAndMerge() {
       return;
     }
 
-    const { targetBranch } = await inquirer.prompt([
+    const fuse = new Fuse(branches, { threshold: 0.4 });
+
+    const { input } = await inquirer.prompt([
       {
-        type: 'list',
-        name: 'targetBranch',
-        message: '请选择要合并的分支',
-        choices: branches,
+        type: 'input',
+        name: 'input',
+        message: '请输入分支名 (模糊匹配已有分支，或直接输入新分支名)',
+        validate: (v: string) => v.trim().length > 0 || '分支名不能为空',
       },
     ]);
+
+    const matched = fuse.search(input);
+    let targetBranch = input;
+    if (matched.length > 0) {
+      const matchedNames = matched.map(m => m.item);
+      const { picked } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'picked',
+          message: `"${input}" 匹配到以下分支，请选择:`,
+          choices: [...matchedNames, new inquirer.Separator(), { name: `直接使用 "${input}"`, value: input }],
+        },
+      ]);
+      targetBranch = picked;
+    }
 
     const hasChanges = execSync('git status --porcelain', { encoding: 'utf8' }).trim().length > 0;
     if (hasChanges) {
@@ -41,14 +59,35 @@ export default async function pullAndMerge() {
     execSync(`git checkout ${originalBranch}`, { stdio: 'inherit' });
 
     console.log(`正在合并分支: ${targetBranch}`);
+    const headBefore = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
     execSync(`git merge ${targetBranch}`, { stdio: 'inherit' });
+    const headAfter = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
 
     if (hasChanges) {
       console.log('正在恢复暂存的更改...');
       execSync('git stash pop', { stdio: 'inherit' });
     }
 
-    console.log(`\n合并完成！请记得提交代码 (git push origin ${originalBranch})`);
+    if (headBefore === headAfter) {
+      console.log('没有需要合并的内容');
+      return;
+    }
+    const { shouldPush } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'shouldPush',
+        message: '是否立即推送提交?',
+        default: true,
+      },
+    ]);
+
+    if (shouldPush) {
+      console.log('正在推送...');
+      execSync(`git push origin ${originalBranch}`, { stdio: 'inherit' });
+      console.log('推送成功');
+    } else {
+      console.log(`请记得推送提交 (git push origin ${originalBranch})`);
+    }
   } catch (error) {
     console.error(`\n操作失败:`, (error as Error).message);
   }
