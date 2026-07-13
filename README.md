@@ -53,6 +53,7 @@ cli --version         # 查看版本
 
 | 命令      | 说明                                        |
 | --------- | ------------------------------------------- |
+| `run`     | 列举 package.json 中的 scripts，选择并执行  |
 | `install` | 自动检测包管理器并安装依赖                  |
 | `update`  | 选择更新范围（全部/prod/devDeps），更新依赖 |
 | `clean`   | 删除 node_modules 和 lock 文件，重新安装    |
