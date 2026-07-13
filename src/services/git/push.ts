@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { exec, spawn } from '../../utils/exec';
 import { selectFilesAndStage } from '../../utils/git';
 import pull, { getCurrentBranch } from './pull';
 
@@ -28,6 +28,43 @@ export default async function push() {
       await pull();
     } catch {
       console.error('自动合并失败，请手动解决冲突后重试');
+      return;
+    }
+
+    const status = exec('git status --porcelain', { encoding: 'utf8' }).trim();
+    const lines = status ? status.split('\n').filter(Boolean) : [];
+    const hasStaged = lines.some((l) => l[0] !== ' ' && l[0] !== '?');
+    const hasUnstaged = lines.some((l) => l[1] !== ' ');
+
+    if (!hasStaged && !hasUnstaged) {
+      console.log('没有新的变更，直接推送...');
+      spawn('git', ['push', 'origin', branch], { stdio: 'inherit' });
+      console.log(`\nbranch ${branch} 推送成功`);
+      return;
+    }
+
+    if (hasStaged && !hasUnstaged) {
+      console.log('检测到已暂存的变更，直接提交推送...');
+      const { content, type } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'content',
+          message: '请输入提交内容:',
+          validate: (input: string) => (input ? true : '提交内容不能为空'),
+        },
+        {
+          type: 'search-list',
+          name: 'type',
+          message: '请选择提交类型:',
+          choices: commitTypes,
+          default: 'chore',
+        },
+      ]);
+
+      const commitMessage = `${type}: ${content}`;
+      spawn('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
+      spawn('git', ['push', 'origin', branch], { stdio: 'inherit' });
+      console.log(`\nbranch ${branch} 提交成功，提交内容为：${commitMessage}`);
       return;
     }
 
