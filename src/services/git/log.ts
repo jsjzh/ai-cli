@@ -1,9 +1,8 @@
+import inquirer from 'inquirer';
 import { exec } from '../../utils/exec';
 
 export default async function log() {
-  const { count } = await (
-    await import('inquirer')
-  ).default.prompt([
+  const { count } = await inquirer.prompt([
     {
       type: 'input',
       name: 'count',
@@ -17,9 +16,10 @@ export default async function log() {
     },
   ]);
 
-  const output = exec(`git log --oneline --graph --decorate -${count || 20}`, {
+  const n = count || 20;
+  const output = exec(`git log --oneline --graph --decorate -${n}`, {
     encoding: 'utf8',
   });
-  console.log(`\n最近的 ${count || 20} 条提交:\n`);
+  console.log(`\n最近的 ${n} 条提交:\n`);
   console.log(output);
 }
