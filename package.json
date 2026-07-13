@@ -2,6 +2,11 @@
   "name": "cli",
   "version": "1.0.0",
   "description": "命令行工具集",
+  "packageManager": "pnpm@10.32.1",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
   "main": "dist/index.js",
   "bin": {
     "cli": "dist/index.js"
@@ -13,11 +18,11 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "fuse.js": "^7.1.0",
+    "fuse.js": "^7.4.2",
     "inquirer": "^8.2.7"
   },
   "devDependencies": {
-    "@types/inquirer": "^8.2.12",
+    "@types/inquirer": "^8.2.13",
     "@types/node": "^20.19.43",
     "typescript": "^5.9.3"
   }
