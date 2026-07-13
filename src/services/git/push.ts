@@ -38,8 +38,14 @@ export default async function push() {
 
     if (!hasStaged && !hasUnstaged) {
       console.log('没有新的变更，直接推送...');
+      const unpushed = exec(`git log origin/${branch}..HEAD --oneline`, {
+        encoding: 'utf8',
+      }).trim();
       spawn('git', ['push', 'origin', branch], { stdio: 'inherit' });
       console.log(`\nbranch ${branch} 推送成功`);
+      if (unpushed) {
+        console.log(`包含以下提交:\n${unpushed}`);
+      }
       return;
     }
 
