@@ -1,11 +1,7 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
+import { spawn } from '../../utils/exec';
 import chalk from 'chalk';
-import {
-  getActiveConfigs,
-  formatConfigLine,
-  GSConfigItem,
-} from '../../utils/gs-config';
+import { getActiveConfigs, formatConfigLine, GSConfigItem } from '../../utils/gs-config';
 
 export default async function test() {
   const activeConfigs = getActiveConfigs();
@@ -36,22 +32,23 @@ export default async function test() {
   for (const config of selected) {
     console.log(chalk.cyan(`\n正在测试 ${config.origin}...`));
     try {
-      exec(`ssh -T ${config.origin}`, {
+      const output = spawn('ssh', ['-T', config.origin], {
         encoding: 'utf8',
         timeout: 10000,
-        stdio: 'inherit',
       });
       console.log(chalk.green(`\n${config.origin}: 连接成功`));
+      if (output) console.log(output);
     } catch (error: any) {
       const output = error.stdout || error.stderr || error.message || '';
       if (
-        output.includes('successfully') ||
-        output.includes('Hi') ||
-        output.includes('Welcome')
+        typeof output === 'string' &&
+        (output.includes('successfully') || output.includes('Hi') || output.includes('Welcome'))
       ) {
         console.log(chalk.green(`\n${config.origin}: 连接成功`));
+        if (output) console.log(output);
       } else {
         console.log(chalk.red(`\n${config.origin}: 连接失败`));
+        if (output) console.log(output);
       }
     }
   }

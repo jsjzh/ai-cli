@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
-import { hasGitRepo } from '../../utils/git';
+import { spawn } from '../../utils/exec';
+import { hasGitRepo, selectFilesAndStage } from '../../utils/git';
 import { commitTypes } from './push';
 
 export default async function initAndPush() {
@@ -49,57 +49,33 @@ export default async function initAndPush() {
     ]);
 
     console.log('正在初始化 Git 仓库...');
-    exec('git init', { stdio: 'inherit' });
+    spawn('git', ['init'], { stdio: 'inherit' });
 
-    exec(`git remote add origin ${answers.remote}`, { stdio: 'inherit' });
+    spawn('git', ['remote', 'add', 'origin', answers.remote], { stdio: 'inherit' });
 
-    exec(`git checkout -b ${answers.branch}`, { stdio: 'inherit' });
+    spawn('git', ['checkout', '-b', answers.branch], { stdio: 'inherit' });
 
-    const remoteHasContent = exec(`git ls-remote --heads origin ${answers.branch}`, { encoding: 'utf8' }).trim().length > 0;
+    const remoteHasContent =
+      spawn('git', ['ls-remote', '--heads', 'origin', answers.branch], { encoding: 'utf8' }).trim()
+        .length > 0;
     if (remoteHasContent) {
       console.log('远程仓库已有内容，正在拉取并合并...');
-      exec(`git pull origin ${answers.branch} --allow-unrelated-histories`, { stdio: 'inherit' });
+      spawn('git', ['pull', 'origin', answers.branch, '--allow-unrelated-histories'], {
+        stdio: 'inherit',
+      });
     }
 
     if (answers.scope === 'all') {
-      exec('git add .', { stdio: 'inherit' });
-    } else {
-      const status = exec('git status --porcelain', { encoding: 'utf8' });
-      const files = status
-        .split('\n')
-        .filter(Boolean)
-        .map((line) => {
-          const file = line.trim().split(/\s+/).pop()!;
-          return { name: file, value: file, checked: false };
-        });
-
-      if (files.length === 0) {
-        console.log('没有变更的文件');
-        return;
-      }
-
-      const { selectedFiles } = await inquirer.prompt([
-        {
-          type: 'checkbox',
-          name: 'selectedFiles',
-          message: '请选择要提交的文件(空格选中, a 全选):',
-          choices: files,
-        },
-      ]);
-
-      if (selectedFiles.length === 0) {
-        console.log('未选择任何文件');
-        return;
-      }
-
-      exec(`git add ${selectedFiles.join(' ')}`, { stdio: 'inherit' });
+      spawn('git', ['add', '.'], { stdio: 'inherit' });
+    } else if (!(await selectFilesAndStage())) {
+      return;
     }
 
     const commitMessage = `${answers.type}: ${answers.content}`;
-    exec(`git commit -m "${commitMessage}"`, { stdio: 'inherit' });
+    spawn('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
 
     console.log('正在推送...');
-    exec(`git push -u origin ${answers.branch}`, { stdio: 'inherit' });
+    spawn('git', ['push', '-u', 'origin', answers.branch], { stdio: 'inherit' });
 
     console.log(`\n推送成功，分支为: ${answers.branch}，提交内容为：${commitMessage}`);
   } catch (error) {

@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
+import { spawn } from '../../utils/exec';
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'fs';
 import path from 'path';
 import {
@@ -64,13 +64,13 @@ export default async function add() {
   ]);
 
   const keyPath = path.join(sshDir, answers.origin);
-  const sshKeygenCmd =
+  const sshKeygenArgs =
     answers.keyType === 'ed25519'
-      ? `ssh-keygen -t ed25519 -C "${answers.useremail}" -f "${keyPath}" -N ""`
-      : `ssh-keygen -t rsa -b 4096 -C "${answers.useremail}" -f "${keyPath}" -N ""`;
+      ? ['-t', 'ed25519', '-C', answers.useremail, '-f', keyPath, '-N', '']
+      : ['-t', 'rsa', '-b', '4096', '-C', answers.useremail, '-f', keyPath, '-N', ''];
 
   try {
-    exec(sshKeygenCmd, { stdio: 'inherit' });
+    spawn('ssh-keygen', sshKeygenArgs, { stdio: 'inherit' });
   } catch (error) {
     console.error('生成密钥失败:', (error as Error).message);
     return;

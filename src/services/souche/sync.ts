@@ -15,7 +15,10 @@ export default async function sync() {
       return;
     }
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-    const allDeps = [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})];
+    const allDeps = [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.devDependencies || {}),
+    ];
 
     if (allDeps.length === 0) {
       console.log('未找到任何依赖');

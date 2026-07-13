@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
+import { spawn } from '../../utils/exec';
 
 export default async function clone() {
   const answers = await inquirer.prompt([
@@ -31,26 +31,25 @@ export default async function clone() {
     },
   ]);
 
-  let cmd = 'git clone';
+  const args = ['clone'];
 
   if (answers.branch) {
-    cmd += ` -b ${answers.branch}`;
+    args.push('-b', answers.branch);
   }
 
   if (answers.depth) {
-    cmd += ` --depth ${answers.depth}`;
+    args.push('--depth', answers.depth);
   }
 
-  cmd += ` ${answers.address}`;
+  args.push(answers.address);
 
   if (answers.name) {
-    cmd += ` ${answers.name}`;
+    args.push(answers.name);
   }
 
   try {
-    exec(cmd, { stdio: 'inherit' });
-    const projectName =
-      answers.name || answers.address.split('/').pop()!.replace('.git', '');
+    spawn('git', args, { stdio: 'inherit' });
+    const projectName = answers.name || answers.address.split('/').pop()!.replace('.git', '');
     console.log(`\n克隆成功！接下来可以执行: cd ${projectName}`);
   } catch (error) {
     console.error(`\n克隆失败:`, (error as Error).message);

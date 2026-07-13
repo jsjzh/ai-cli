@@ -37,7 +37,7 @@ export function writeGSConfig(configs: GSConfigItem[]): void {
 }
 
 export function getActiveConfigs(): GSConfigItem[] {
-  return readGSConfig().filter((c) => !c.deleteTime);
+  return readGSConfig().filter((c) => c.deleteTime == null);
 }
 
 export function formatConfigLine(config: GSConfigItem): string {

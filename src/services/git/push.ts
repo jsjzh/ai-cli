@@ -1,5 +1,6 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
+import { spawn } from '../../utils/exec';
+import { selectFilesAndStage } from '../../utils/git';
 import pull, { getCurrentBranch } from './pull';
 
 export const commitTypes = [
@@ -57,43 +58,15 @@ export default async function push() {
     ]);
 
     if (answers.scope === 'all') {
-      exec('git add .', { stdio: 'inherit' });
-    } else {
-      const status = exec('git status --porcelain', { encoding: 'utf8' });
-      const files = status
-        .split('\n')
-        .filter(Boolean)
-        .map((line) => {
-          const file = line.trim().split(/\s+/).pop()!;
-          return { name: file, value: file, checked: false };
-        });
-
-      if (files.length === 0) {
-        console.log('没有变更的文件');
-        return;
-      }
-
-      const { selectedFiles } = await inquirer.prompt([
-        {
-          type: 'checkbox',
-          name: 'selectedFiles',
-          message: '请选择要提交的文件(空格选中, a 全选):',
-          choices: files,
-        },
-      ]);
-
-      if (selectedFiles.length === 0) {
-        console.log('未选择任何文件');
-        return;
-      }
-
-      exec(`git add ${selectedFiles.join(' ')}`, { stdio: 'inherit' });
+      spawn('git', ['add', '.'], { stdio: 'inherit' });
+    } else if (!(await selectFilesAndStage())) {
+      return;
     }
 
     const commitMessage = `${answers.type}: ${answers.content}`;
-    exec(`git commit -m "${commitMessage}"`, { stdio: 'inherit' });
+    spawn('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
 
-    exec(`git push origin ${branch}`, { stdio: 'inherit' });
+    spawn('git', ['push', 'origin', branch], { stdio: 'inherit' });
 
     console.log(`\nbranch ${branch} 提交成功，提交内容为：${commitMessage}`);
   } catch (error) {

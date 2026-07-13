@@ -1,4 +1,4 @@
-import { exec } from '../../utils/exec';
+import { spawn } from '../../utils/exec';
 import chalk from 'chalk';
 import { getActiveConfigs, GSConfigItem } from '../../utils/gs-config';
 import { hasGitRepo } from '../../utils/git';
@@ -8,10 +8,10 @@ export default async function current() {
   const scopeFlag = hasGitRepo() ? '--local' : '--global';
 
   try {
-    const name = exec(`git config ${scopeFlag} user.name`, {
+    const name = spawn('git', ['config', scopeFlag, 'user.name'], {
       encoding: 'utf8',
     }).trim();
-    const email = exec(`git config ${scopeFlag} user.email`, {
+    const email = spawn('git', ['config', scopeFlag, 'user.email'], {
       encoding: 'utf8',
     }).trim();
 
@@ -21,7 +21,7 @@ export default async function current() {
 
     const activeConfigs = getActiveConfigs();
     const match = activeConfigs.find(
-      (c: GSConfigItem) => c.username === name && c.useremail === email
+      (c: GSConfigItem) => c.username === name && c.useremail === email,
     );
     if (match) {
       origin = match.origin;
@@ -29,14 +29,17 @@ export default async function current() {
       keyType = match.keyType;
     }
 
+    const pad = (s: string, n: number) => s.padEnd(Math.max(s.length + 2, n));
+
     console.log(chalk.cyan(`\n当前 ${scope} 配置:\n`));
     console.log(
-      chalk.white('  scope  | origin | username | useremail | host | keyType')
+      chalk.white(
+        `  ${pad('scope', 8)}${pad('origin', 8)}${pad('username', 10)}${pad('useremail', 12)}host  keyType`,
+      ),
     );
-    console.log(chalk.gray('  ' + '-'.repeat(70)));
-    console.log(
-      `  ${scope.padEnd(7)} | ${origin.padEnd(6)} | ${name.padEnd(8)} | ${email.padEnd(9)} | ${host.padEnd(4)} | ${keyType}`
-    );
+    const line = `  ${pad(scope, 8)}${pad(origin, 8)}${pad(name, 10)}${pad(email, 12)}${pad(host, 6)}${keyType}`;
+    console.log(chalk.gray('  ' + '-'.repeat(line.length - 2)));
+    console.log(line);
     console.log();
   } catch {
     console.log(`暂无 ${scope} 的 git 配置`);

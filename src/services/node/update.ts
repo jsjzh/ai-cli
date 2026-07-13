@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
+import { spawn } from '../../utils/exec';
 import { detectPackageManager } from '../../utils/node';
 
 export default async function update() {
@@ -19,23 +19,20 @@ export default async function update() {
     },
   ]);
 
-  let updateCmd: string;
+  const isYarn = pm === 'yarn';
+  const args: string[] = isYarn ? ['upgrade'] : ['update'];
 
-  if (pm === 'npm') {
-    const flag =
-      depType === 'all'
-        ? ''
-        : `--${depType === 'dep' ? 'save-prod' : 'save-dev'}`;
-    updateCmd = `npm update ${flag}`.trim();
-  } else if (pm === 'yarn') {
-    updateCmd = 'yarn upgrade';
-  } else {
-    updateCmd = 'pnpm update';
+  if (depType !== 'all') {
+    if (pm === 'npm') {
+      args.push(depType === 'dep' ? '--save-prod' : '--save-dev');
+    } else if (pm === 'pnpm') {
+      args.push(depType === 'dep' ? '--prod' : '--dev');
+    }
   }
 
   try {
     console.log(`使用包管理器: ${pm}`);
-    exec(updateCmd, { stdio: 'inherit', encoding: 'utf8' });
+    spawn(pm, args, { stdio: 'inherit' });
     console.log(`\n依赖更新完成`);
   } catch (error) {
     console.error(`\n更新失败:`, (error as Error).message);

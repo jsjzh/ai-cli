@@ -57,11 +57,11 @@ export default async function del() {
 
   const sshDir = getSSHDir();
   const keyPath = path.join(sshDir, config.origin);
-  try {
+  if (existsSync(keyPath)) {
     unlinkSync(keyPath);
+  }
+  if (existsSync(`${keyPath}.pub`)) {
     unlinkSync(`${keyPath}.pub`);
-  } catch {
-    // ignore if files don't exist
   }
 
   const allConfigs = readGSConfig();

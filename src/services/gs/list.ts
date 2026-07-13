@@ -9,17 +9,31 @@ export default async function list() {
     return;
   }
 
+  const pad = (items: string[]) => Math.max(...items.map((s) => s.length)) + 2;
+
+  const origins = activeConfigs.map((c) => c.origin);
+  const usernames = activeConfigs.map((c) => c.username);
+  const emails = activeConfigs.map((c) => c.useremail);
+  const hosts = activeConfigs.map((c) => c.host);
+
+  const wOrigin = Math.max(pad(origins), 8);
+  const wUser = Math.max(pad(usernames), 10);
+  const wEmail = Math.max(pad(emails), 12);
+  const wHost = Math.max(pad(hosts), 6);
+
+  const sep = chalk.gray('  ' + '-'.repeat(wOrigin + wUser + wEmail + wHost + 14));
+
   console.log(chalk.cyan('\nSSH 配置列表:\n'));
   console.log(
     chalk.white(
-      '  origin         | username        | useremail                  | host            | keyType'
-    )
+      `  ${'origin'.padEnd(wOrigin)} | ${'username'.padEnd(wUser)} | ${'useremail'.padEnd(wEmail)} | ${'host'.padEnd(wHost)} | keyType`,
+    ),
   );
-  console.log(chalk.gray('  ' + '-'.repeat(100)));
+  console.log(sep);
 
   activeConfigs.forEach((config: GSConfigItem) => {
     console.log(
-      `  ${config.origin.padEnd(15)} | ${config.username.padEnd(15)} | ${config.useremail.padEnd(25)} | ${config.host.padEnd(15)} | ${config.keyType}`
+      `  ${config.origin.padEnd(wOrigin)} | ${config.username.padEnd(wUser)} | ${config.useremail.padEnd(wEmail)} | ${config.host.padEnd(wHost)} | ${config.keyType}`,
     );
   });
   console.log();

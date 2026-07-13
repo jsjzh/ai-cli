@@ -1,10 +1,6 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
-import {
-  getActiveConfigs,
-  formatConfigLine,
-  GSConfigItem,
-} from '../../utils/gs-config';
+import { spawn } from '../../utils/exec';
+import { getActiveConfigs, formatConfigLine, GSConfigItem } from '../../utils/gs-config';
 import { hasGitRepo } from '../../utils/git';
 
 export default async function use() {
@@ -48,10 +44,10 @@ export default async function use() {
   const scopeFlag = scope === 'local' ? '--local' : '--global';
 
   try {
-    exec(`git config ${scopeFlag} user.name "${config.username}"`, {
+    spawn('git', ['config', scopeFlag, 'user.name', config.username], {
       stdio: 'inherit',
     });
-    exec(`git config ${scopeFlag} user.email "${config.useremail}"`, {
+    spawn('git', ['config', scopeFlag, 'user.email', config.useremail], {
       stdio: 'inherit',
     });
     console.log(`\n已在 ${scope} 范围设置 git config：`);

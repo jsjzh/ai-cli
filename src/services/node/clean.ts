@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
+import { spawn } from '../../utils/exec';
 import { existsSync, rmSync } from 'fs';
 import { detectPackageManager, lockFiles } from '../../utils/node';
 
@@ -32,9 +32,8 @@ export default async function clean() {
       console.log(`已删除 ${lockFile}`);
     }
 
-    const installCmd = pm === 'yarn' ? 'yarn install' : `${pm} install`;
     console.log('正在重新安装依赖...');
-    exec(installCmd, { stdio: 'inherit' });
+    spawn(pm, ['install'], { stdio: 'inherit' });
 
     console.log(`\n清除并重装完成`);
   } catch (error) {
