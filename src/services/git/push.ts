@@ -39,7 +39,7 @@ export default async function push() {
         validate: (input: string) => (input ? true : '提交内容不能为空'),
       },
       {
-        type: 'list',
+        type: 'search-list',
         name: 'type',
         message: '请选择提交类型:',
         choices: commitTypes,

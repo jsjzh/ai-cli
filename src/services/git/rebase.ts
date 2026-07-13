@@ -34,7 +34,7 @@ export default async function rebase() {
       const matchedNames = matched.map((m) => m.item);
       const { picked } = await inquirer.prompt([
         {
-          type: 'list',
+          type: 'search-list',
           name: 'picked',
           message: `匹配到以下分支，请选择:`,
           choices: [

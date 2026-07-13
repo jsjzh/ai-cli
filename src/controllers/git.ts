@@ -14,7 +14,7 @@ export default async function gitController(action?: string) {
   if (!action) {
     const { picked } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'search-list',
         name: 'picked',
         message: '请选择 Git 操作',
         choices: [

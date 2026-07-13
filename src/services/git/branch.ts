@@ -50,7 +50,7 @@ export default async function branch() {
 
     const { target } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'search-list',
         name: 'target',
         message: '请选择要删除的分支:',
         choices: branches.map((b) => ({ name: b, value: b })),

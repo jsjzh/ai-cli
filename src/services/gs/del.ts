@@ -22,7 +22,7 @@ export default async function del() {
 
   const { config } = await inquirer.prompt([
     {
-      type: 'list',
+      type: 'search-list',
       name: 'config',
       message: '请选择要删除的 SSH 配置:',
       choices: activeConfigs.map((c: GSConfigItem) => ({

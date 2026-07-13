@@ -10,7 +10,7 @@ export default async function gsController(action?: string) {
   if (!action) {
     const { picked } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'search-list',
         name: 'picked',
         message: '请选择 SSH 配置操作',
         choices: [

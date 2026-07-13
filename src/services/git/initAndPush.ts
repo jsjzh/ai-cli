@@ -30,7 +30,7 @@ export default async function initAndPush() {
         default: 'init project',
       },
       {
-        type: 'list',
+        type: 'search-list',
         name: 'type',
         message: '请选择提交类型:',
         choices: commitTypes,

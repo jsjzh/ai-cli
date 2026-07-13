@@ -13,7 +13,7 @@ export default async function use() {
 
   const { config } = await inquirer.prompt([
     {
-      type: 'list',
+      type: 'search-list',
       name: 'config',
       message: '请选择要使用的 SSH 配置:',
       choices: activeConfigs.map((c: GSConfigItem) => ({

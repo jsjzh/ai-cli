@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
 import inquirer from 'inquirer';
+import SearchList from 'inquirer-search-list';
 import gitController from './controllers/git';
 import gsController from './controllers/gs';
 import nodeController from './controllers/node';
 import soucheController from './controllers/souche';
 import { version } from '../package.json';
+
+inquirer.registerPrompt('search-list', SearchList);
 
 const HELP = `用法: cli [command] [subcommand]
 
@@ -63,7 +66,7 @@ async function main() {
 
   const { picked } = await inquirer.prompt([
     {
-      type: 'list',
+      type: 'search-list',
       name: 'picked',
       message: '请选择要执行的命令',
       choices: [
