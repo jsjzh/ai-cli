@@ -25,6 +25,7 @@
 
 ### 功能补全
 
+- **node cache**: 新增缓存清理命令，自动识别 pnpm/yarn/npm 并执行对应缓存清理操作
 - **CLI 非交互模式**: 支持 `cli <command> <subcommand>` 直达子命令，`cli --version` 查看版本，`cli --help` 查看帮助
 - **Git stash 管理**: 暂存更改 / 选择恢复特定暂存 / 查看暂存列表，支持带说明暂存
 - **Git log**: 查看最近 N 条提交历史（含 `--oneline --graph --decorate`）

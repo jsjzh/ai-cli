@@ -2,6 +2,7 @@ import inquirer from 'inquirer';
 import install from '../services/node/install';
 import update from '../services/node/update';
 import clean from '../services/node/clean';
+import cache from '../services/node/cache';
 import run from '../services/node/run';
 
 export default async function nodeController(action?: string) {
@@ -16,6 +17,7 @@ export default async function nodeController(action?: string) {
           { name: '2. install - 安装依赖', value: 'install' },
           { name: '3. update - 更新依赖', value: 'update' },
           { name: '4. clean - 清除并重装依赖', value: 'clean' },
+          { name: '5. cache - 清理缓存', value: 'cache' },
         ],
       },
     ]);
@@ -34,6 +36,9 @@ export default async function nodeController(action?: string) {
       break;
     case 'clean':
       await clean();
+      break;
+    case 'cache':
+      await cache();
       break;
     default:
       break;

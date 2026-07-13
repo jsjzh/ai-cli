@@ -15,7 +15,7 @@ const HELP = `用法: cli [command] [subcommand]
 命令:
   git        Git 操作 (push / pull / clone / pullAndMerge / initAndPush / stash / log / status / branch / rebase)
   gs         Git SSH 配置管理 (add / list / test / use / del / current)
-  node       Node.js 包管理 (run / install / update / clean)
+  node       Node.js 包管理 (run / install / update / clean / cache)
   souche     内部工具 (sync)
 
 选项:
@@ -25,6 +25,7 @@ const HELP = `用法: cli [command] [subcommand]
 示例:
   cli git push              # 直接进入 Git 推送流程
   cli node clean            # 直接进入清除重装流程
+  cli node cache            # 直接进入缓存清理流程
   cli git --help            # 查看 Git 子命令帮助
   cli --version             # 查看版本
 `;
@@ -64,10 +65,12 @@ const NODE_HELP = `Node.js 包管理子命令:
   install 安装依赖
   update  更新依赖
   clean   清除 node_modules 并重装
+  cache   清理包管理器缓存
 
 示例:
   cli node run
   cli node clean
+  cli node cache
 `;
 
 const SOUCHE_HELP = `Souche 内部工具:
