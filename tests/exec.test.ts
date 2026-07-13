@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { exec, spawn } from './exec';
+import { exec, spawn } from '../src/utils/exec';
 
 describe('exec', () => {
   it('executes a command and returns Buffer', () => {

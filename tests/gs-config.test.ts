@@ -7,8 +7,8 @@ import {
   getGSConfigPath,
   formatConfigLine,
   getActiveConfigs,
-} from './gs-config';
-import type { GSConfigItem } from './gs-config';
+} from '../src/utils/gs-config';
+import type { GSConfigItem } from '../src/utils/gs-config';
 
 vi.mock('fs', async () => {
   const actual = await vi.importActual('fs');

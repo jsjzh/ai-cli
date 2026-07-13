@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { existsSync } from 'fs';
-import { detectPackageManager, lockFiles } from './node';
+import { detectPackageManager, lockFiles } from '../src/utils/node';
 
 vi.mock('fs', async () => {
   const actual = await vi.importActual('fs');
