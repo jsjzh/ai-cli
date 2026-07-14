@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1] - 2026-07-14
+
+### BUG 修复
+
+- **git push**: 提交失败后自动 `git reset` 回滚暂存状态，避免重试时误入"已暂存"路径
+- **spawn**: 错误消息现在包含命令的 stderr 输出，方便排查失败原因
+- **spawn**: 含空格的参数在日志/错误消息中用双引号包裹，消除显示歧义
+- **spawn/inquirer 兼容性**: 将 `{ stdio: 'inherit' }` 改为 `{ stdio: ['ignore', 'inherit', 'inherit'] }`，避免 `spawnSync` 继承 stdin 导致 inquirer 的 readline 在 Node.js v24 上崩溃
+
 ## [1.0.0] - 2025-07-13
 
 ### 安全修复
