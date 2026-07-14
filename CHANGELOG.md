@@ -9,6 +9,7 @@
 
 ### BUG 修复
 
+- **git push**: 提交失败后自动回滚暂存状态，避免重试时误判为"已暂存变更"而跳过文件选择；错误信息现在包含 git stderr 输出
 - **souche/sync**: 将并行 sync 批次大小从 10 降至 5，避免并发过高导致执行失败
 - **gs/test.ts**: 修复 SSH 测试输出无法捕获的问题（移除 `stdio:'inherit'`，改用 capture stdout/stderr 判断成功关键词）
 - **gs/del.ts**: 用 `existsSync` 前置检查替代空 `catch`，不再静默吞异常

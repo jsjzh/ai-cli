@@ -74,6 +74,11 @@ export default async function push() {
       return;
     }
 
+    const stagedBefore = exec('git diff --cached --name-only', { encoding: 'utf8' })
+      .trim()
+      .split('\n')
+      .filter(Boolean);
+
     const answers = await inquirer.prompt([
       {
         type: 'input',
@@ -107,7 +112,17 @@ export default async function push() {
     }
 
     const commitMessage = `${answers.type}: ${answers.content}`;
-    spawn('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
+    try {
+      spawn('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
+    } catch {
+      spawn('git', ['reset'], { stdio: 'inherit' });
+      if (stagedBefore.length > 0) {
+        spawn('git', ['add', ...stagedBefore], { stdio: 'inherit' });
+      }
+      throw new Error(
+        `提交失败，已还原暂存状态。原始暂存文件已恢复:\n${stagedBefore.length > 0 ? stagedBefore.map((f) => `  ${f}`).join('\n') : '  (无)'}`,
+      );
+    }
 
     spawn('git', ['push', 'origin', branch], { stdio: 'inherit' });
 
