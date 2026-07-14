@@ -31,7 +31,7 @@ export default async function push() {
       return;
     }
 
-    const status = exec('git status --porcelain', { encoding: 'utf8' }).trim();
+    const status = exec('git status --porcelain', { encoding: 'utf8' });
     const lines = status ? status.split('\n').filter(Boolean) : [];
     const hasStaged = lines.some((l) => l[0] !== ' ' && l[0] !== '?');
     const hasUnstaged = lines.some((l) => l[1] !== ' ');

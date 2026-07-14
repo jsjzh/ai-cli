@@ -4,6 +4,7 @@
 
 ### BUG 修复
 
+- **git push**: 修复 `.trim()` 误删 `git status --porcelain` 首列空格导致 `hasStaged` 误判为 true，恢复文件选择流程
 - **git push**: 提交失败后自动 `git reset` 回滚暂存状态，避免重试时误入"已暂存"路径
 - **spawn**: 错误消息现在包含命令的 stderr 输出，方便排查失败原因
 - **spawn**: 含空格的参数在日志/错误消息中用双引号包裹，消除显示歧义
