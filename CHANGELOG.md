@@ -9,6 +9,7 @@
 
 ### BUG 修复
 
+- **souche/sync**: 将并行 sync 批次大小从 10 降至 5，避免并发过高导致执行失败
 - **gs/test.ts**: 修复 SSH 测试输出无法捕获的问题（移除 `stdio:'inherit'`，改用 capture stdout/stderr 判断成功关键词）
 - **gs/del.ts**: 用 `existsSync` 前置检查替代空 `catch`，不再静默吞异常
 - **node/update.ts**: pnpm 的 depType 选择（all/prod/dev）现在实际生效
@@ -47,6 +48,7 @@
 ### 移除
 
 - **nvm 功能**: 删除 `nvm.ts`（`execSync` 无法持久化到用户 shell，切换 Node 版本请直接使用 `nvm use`）
+- **package.json**: 删除 `packageManager` 字段，避免因本地 pnpm 版本与声明不符导致 Corepack 报错
 
 ### 文档
 

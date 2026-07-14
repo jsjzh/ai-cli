@@ -28,8 +28,8 @@ export default async function sync() {
     console.log(`共 ${allDeps.length} 个依赖，开始分批 sync...`);
 
     const batchCommands: string[] = [];
-    for (let i = 0; i < allDeps.length; i += 10) {
-      const batch = allDeps.slice(i, i + 10);
+    for (let i = 0; i < allDeps.length; i += 5) {
+      const batch = allDeps.slice(i, i + 5);
       batchCommands.push(`snpm sync ${batch.join(' ')} &`);
     }
 
