@@ -34,11 +34,12 @@ export function spawn(
   options?: SpawnSyncOptions,
 ): Buffer | string {
   const cwd = options?.cwd ? String(options.cwd) : process.cwd();
-  const cmdStr = `${command} ${args.join(' ')}`;
-  console.log(`「${timestamp()}」: 在 ${cwd} 执行 ${cmdStr}`);
+  const shellCmd = [command, ...args.map((a) => (a.includes(' ') ? `"${a}"` : a))].join(' ');
+  console.log(`「${timestamp()}」: 在 ${cwd} 执行 ${shellCmd}`);
   const result = spawnSync(command, args, options as SpawnSyncOptions);
   if (result.status !== 0) {
-    const err = new Error(`命令失败: ${cmdStr}`);
+    const stderr = result.stderr?.toString().trim();
+    const err = new Error(`命令失败: ${shellCmd}${stderr ? `\n${stderr}` : ''}`);
     (err as any).stdout = result.stdout;
     (err as any).stderr = result.stderr;
     (err as any).status = result.status;
