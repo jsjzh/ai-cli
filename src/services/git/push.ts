@@ -41,7 +41,7 @@ export default async function push() {
       const unpushed = exec(`git log origin/${branch}..HEAD --oneline`, {
         encoding: 'utf8',
       }).trim();
-      spawn('git', ['push', 'origin', branch], { stdio: 'inherit' });
+      spawn('git', ['push', 'origin', branch], { stdio: ['ignore', 'inherit', 'inherit'] });
       console.log(`\nbranch ${branch} 推送成功`);
       if (unpushed) {
         console.log(`包含以下提交:\n${unpushed}`);
@@ -68,8 +68,8 @@ export default async function push() {
       ]);
 
       const commitMessage = `${type}: ${content}`;
-      spawn('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
-      spawn('git', ['push', 'origin', branch], { stdio: 'inherit' });
+      spawn('git', ['commit', '-m', commitMessage], { stdio: ['ignore', 'inherit', 'inherit'] });
+      spawn('git', ['push', 'origin', branch], { stdio: ['ignore', 'inherit', 'inherit'] });
       console.log(`\nbranch ${branch} 提交成功，提交内容为：${commitMessage}`);
       return;
     }
@@ -106,25 +106,25 @@ export default async function push() {
     ]);
 
     if (answers.scope === 'all') {
-      spawn('git', ['add', '.'], { stdio: 'inherit' });
+      spawn('git', ['add', '.'], { stdio: ['ignore', 'inherit', 'inherit'] });
     } else if (!(await selectFilesAndStage())) {
       return;
     }
 
     const commitMessage = `${answers.type}: ${answers.content}`;
     try {
-      spawn('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
+      spawn('git', ['commit', '-m', commitMessage], { stdio: ['ignore', 'inherit', 'inherit'] });
     } catch {
-      spawn('git', ['reset'], { stdio: 'inherit' });
+      spawn('git', ['reset'], { stdio: ['ignore', 'inherit', 'inherit'] });
       if (stagedBefore.length > 0) {
-        spawn('git', ['add', ...stagedBefore], { stdio: 'inherit' });
+        spawn('git', ['add', ...stagedBefore], { stdio: ['ignore', 'inherit', 'inherit'] });
       }
       throw new Error(
         `提交失败，已还原暂存状态。原始暂存文件已恢复:\n${stagedBefore.length > 0 ? stagedBefore.map((f) => `  ${f}`).join('\n') : '  (无)'}`,
       );
     }
 
-    spawn('git', ['push', 'origin', branch], { stdio: 'inherit' });
+    spawn('git', ['push', 'origin', branch], { stdio: ['ignore', 'inherit', 'inherit'] });
 
     console.log(`\nbranch ${branch} 提交成功，提交内容为：${commitMessage}`);
   } catch (error) {

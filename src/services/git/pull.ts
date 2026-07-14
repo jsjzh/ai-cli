@@ -8,7 +8,7 @@ export default async function pull() {
   try {
     const branch = getCurrentBranch();
     console.log(`当前分支: ${branch}`);
-    spawn('git', ['pull', 'origin', branch], { stdio: 'inherit' });
+    spawn('git', ['pull', 'origin', branch], { stdio: ['ignore', 'inherit', 'inherit'] });
     console.log(`\n拉取成功`);
   } catch (error) {
     console.error(`\n拉取失败:`, (error as Error).message);
