@@ -37,7 +37,7 @@ export default async function initAndPush() {
         default: 'chore',
       },
       {
-        type: 'list',
+        type: 'search-list',
         name: 'scope',
         message: '请选择提交范围:',
         choices: [

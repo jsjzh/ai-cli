@@ -7,7 +7,7 @@ export default async function update() {
 
   const { depType } = await inquirer.prompt([
     {
-      type: 'list',
+      type: 'search-list',
       name: 'depType',
       message: '请选择要更新的依赖类型:',
       choices: [

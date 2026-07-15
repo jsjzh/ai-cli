@@ -28,7 +28,7 @@ export default async function use() {
   if (hasGitRepo()) {
     const { scopeChoice } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'search-list',
         name: 'scopeChoice',
         message: '请选择配置生效范围:',
         choices: [

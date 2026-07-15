@@ -118,7 +118,7 @@ export default async function deploy() {
 
       const { app } = await inquirer.prompt([
         {
-          type: 'list',
+          type: 'search-list',
           name: 'app',
           message: '请选择应用',
           choices: appRes.data.items.map((item: ApplicationItem) => ({
@@ -149,7 +149,7 @@ export default async function deploy() {
 
     const { pipeline } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'search-list',
         name: 'pipeline',
         message: '请选择流水线',
         choices: pipeRes.data.map((item: PipelineItem) => ({
@@ -173,7 +173,7 @@ export default async function deploy() {
 
     const { branch } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'search-list',
         name: 'branch',
         message: '请选择分支',
         choices: branchRes.data.map((item: BranchItem) => ({

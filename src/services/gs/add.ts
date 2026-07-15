@@ -52,7 +52,7 @@ export default async function add() {
       validate: (input: string) => (input ? true : 'Host 不能为空'),
     },
     {
-      type: 'list',
+      type: 'search-list',
       name: 'keyType',
       message: '请选择密钥类型:',
       choices: [

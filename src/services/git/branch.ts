@@ -4,7 +4,7 @@ import { exec, spawn } from '../../utils/exec';
 export default async function branch() {
   const { action } = await inquirer.prompt([
     {
-      type: 'list',
+      type: 'search-list',
       name: 'action',
       message: '请选择分支操作',
       choices: [

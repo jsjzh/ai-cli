@@ -5,7 +5,7 @@ export default async function stash() {
   try {
     const { action } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'search-list',
         name: 'action',
         message: '请选择暂存操作',
         choices: [

@@ -94,7 +94,7 @@ export default async function push() {
         default: 'chore',
       },
       {
-        type: 'list',
+        type: 'search-list',
         name: 'scope',
         message: '请选择提交范围:',
         choices: [
