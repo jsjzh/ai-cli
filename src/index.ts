@@ -75,9 +75,11 @@ const NODE_HELP = `Node.js 包管理子命令:
 
 const SOUCHE_HELP = `Souche 内部工具:
   sync    同步依赖到内部 npm 仓库
+  deploy  部署当前项目到 Souche DevOps
 
 示例:
   cli souche sync
+  cli souche deploy
 `;
 
 const COMMAND_HELP: Record<string, string> = {

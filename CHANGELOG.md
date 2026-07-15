@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.2] - 2026-07-15
+
+### 功能补全
+
+- **souche deploy**: 新增 `cli souche deploy` 命令，支持一键部署当前项目到 Souche DevOps
+  - 自动管理 `~/.aiclirc` 配置文件中的 `_security_token_inc`
+  - 检查 token 有效性，失效时交互式引导用户重新输入
+  - 读取 package.json, 查询应用、选择流水线、选择分支，最终触发构建
+  - 首次选择应用后自动绑定当前路径 + appId 到 `~/.aiclirc`，下次部署跳过应用选择
+- **API 层**: 新增 `src/apis/index.ts`，封装 7 个 Souche DevOps 接口调用
+- **类型声明**: 新增 `src/types/api.d.ts`，声明所有 API 请求/响应类型
+- **souche controller**: `deploy` 子命令已接入交互菜单，支持 `cli souche deploy` 直达
+
 ## [1.0.1] - 2026-07-14
 
 ### BUG 修复
