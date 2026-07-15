@@ -36,8 +36,8 @@ describe('gs-config utilities', () => {
       expect(getConfigPath()).toBe(`${homedir()}/.ssh/config`);
     });
 
-    it('getGSConfigPath returns ~/.ssh/gs-config.json', () => {
-      expect(getGSConfigPath()).toBe(`${homedir()}/.ssh/gs-config.json`);
+    it('getGSConfigPath returns ~/.aiclirc', () => {
+      expect(getGSConfigPath()).toBe(`${homedir()}/.aiclirc`);
     });
   });
 
@@ -62,12 +62,14 @@ describe('gs-config utilities', () => {
     it('filters out deleted configs', () => {
       vi.mocked(existsSync).mockReturnValue(true);
       vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify([
-          { origin: 'active1', deleteTime: null },
-          { origin: 'active2', deleteTime: null },
-          { origin: 'deleted', deleteTime: '2025-01-01T00:00:00.000Z' },
-          { origin: 'emptyString', deleteTime: '' },
-        ]),
+        JSON.stringify({
+          gs: [
+            { origin: 'active1', deleteTime: null },
+            { origin: 'active2', deleteTime: null },
+            { origin: 'deleted', deleteTime: '2025-01-01T00:00:00.000Z' },
+            { origin: 'emptyString', deleteTime: '' },
+          ],
+        }),
       );
 
       const active = getActiveConfigs();

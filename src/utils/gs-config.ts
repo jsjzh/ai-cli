@@ -24,6 +24,10 @@ export function getConfigPath(): string {
   return path.join(SSH_DIR, 'config');
 }
 
+export function getGSConfigPath(): string {
+  return AICLIRC_PATH;
+}
+
 function readAiclirc(): Record<string, unknown> {
   if (!existsSync(AICLIRC_PATH)) return {};
   try {
