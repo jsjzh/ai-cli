@@ -68,7 +68,7 @@ cli --version         # 查看版本
 
 ## 数据存储
 
-- SSH 配置元数据：`~/.ssh/gs-config.json`
+- CLI 全局配置：`~/.aiclirc`（含 SSH 配置、Deploy token/绑定等）
 - SSH 密钥文件：`~/.ssh/`
 - SSH 客户端配置：`~/.ssh/config`
 

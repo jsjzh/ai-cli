@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, renameSync } from 'fs';
 import { homedir } from 'os';
 import path from 'path';
 
@@ -13,6 +13,8 @@ export interface GSConfigItem {
 }
 
 const SSH_DIR = path.join(homedir(), '.ssh');
+const AICLIRC_PATH = path.join(homedir(), '.aiclirc');
+const OLD_GS_CONFIG_PATH = path.join(SSH_DIR, 'gs-config.json');
 
 export function getSSHDir(): string {
   return SSH_DIR;
@@ -22,18 +24,47 @@ export function getConfigPath(): string {
   return path.join(SSH_DIR, 'config');
 }
 
-export function getGSConfigPath(): string {
-  return path.join(SSH_DIR, 'gs-config.json');
+function readAiclirc(): Record<string, unknown> {
+  if (!existsSync(AICLIRC_PATH)) return {};
+  try {
+    return JSON.parse(readFileSync(AICLIRC_PATH, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function writeAiclirc(config: Record<string, unknown>): void {
+  writeFileSync(AICLIRC_PATH, JSON.stringify(config, null, 2));
+}
+
+function migrateOldConfig(): void {
+  if (!existsSync(OLD_GS_CONFIG_PATH)) return;
+  const aiclirc = readAiclirc();
+  if (aiclirc.gs) return;
+  try {
+    const oldData = JSON.parse(readFileSync(OLD_GS_CONFIG_PATH, 'utf8'));
+    if (!Array.isArray(oldData) || oldData.length === 0) return;
+    aiclirc.gs = oldData;
+    writeAiclirc(aiclirc);
+    renameSync(OLD_GS_CONFIG_PATH, OLD_GS_CONFIG_PATH + '.bak');
+    console.log('已迁移 ~/.ssh/gs-config.json → ~/.aiclirc (原文件已备份为 .bak)');
+  } catch {
+    // 迁移失败不阻塞
+  }
 }
 
 export function readGSConfig(): GSConfigItem[] {
-  const configPath = getGSConfigPath();
-  if (!existsSync(configPath)) return [];
-  return JSON.parse(readFileSync(configPath, 'utf8'));
+  migrateOldConfig();
+  const aiclirc = readAiclirc();
+  const gs = aiclirc.gs;
+  if (!Array.isArray(gs)) return [];
+  return gs as GSConfigItem[];
 }
 
 export function writeGSConfig(configs: GSConfigItem[]): void {
-  writeFileSync(getGSConfigPath(), JSON.stringify(configs, null, 2));
+  const aiclirc = readAiclirc();
+  aiclirc.gs = configs;
+  writeAiclirc(aiclirc);
 }
 
 export function getActiveConfigs(): GSConfigItem[] {
@@ -41,5 +72,6 @@ export function getActiveConfigs(): GSConfigItem[] {
 }
 
 export function formatConfigLine(config: GSConfigItem): string {
-  return `${config.origin} | ${config.username} | ${config.useremail} | ${config.host} | ${config.keyType}`;
+  const keyType = config.keyType || '-';
+  return `${config.origin} | ${config.username} | ${config.useremail} | ${config.host} | ${keyType}`;
 }

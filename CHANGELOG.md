@@ -2,6 +2,12 @@
 
 ## [1.0.2] - 2026-07-15
 
+### 架构优化
+
+- **gs 配置存储迁移**: SSH 配置元数据从 `~/.ssh/gs-config.json` 迁移至 `~/.aiclirc`，统一 CLI 配置管理
+- 旧配置自动迁移：首次读取时从 `~/.ssh/gs-config.json` 导入数据，原文件备份为 `.bak`
+- `formatConfigLine` 容错：`keyType` 缺失时显示 `-` 而非 `undefined`
+
 ### 功能补全
 
 - **souche deploy**: 新增 `cli souche deploy` 命令，支持一键部署当前项目到 Souche DevOps
