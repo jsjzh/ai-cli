@@ -16,7 +16,7 @@ const HELP = `用法: cli [command] [subcommand]
   git        Git 操作 (push / pull / clone / pullAndMerge / initAndPush / stash / log / status / branch / rebase)
   gs         Git SSH 配置管理 (add / list / test / use / del / current)
   node       Node.js 包管理 (run / install / update / clean / cache)
-  souche     内部工具 (sync)
+  souche     内部工具 (deploy / sync)
 
 选项:
   --help     显示帮助信息
