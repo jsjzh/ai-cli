@@ -1,0 +1,2 @@
+patchedDependencies:
+  inquirer-search-list: patches/inquirer-search-list.patch
