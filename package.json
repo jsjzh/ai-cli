@@ -1,6 +1,6 @@
 {
   "name": "cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "命令行工具集",
   "engines": {
     "node": ">=20.0.0",
@@ -32,6 +32,7 @@
     "@types/node": "^20.19.43",
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
+    "patch-package": "^8.0.1",
     "prettier": "^3.9.5",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.63.0",

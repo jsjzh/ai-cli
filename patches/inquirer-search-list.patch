@@ -1,0 +1,32 @@
+diff --git a/dist/index.js b/dist/index.js
+index 87ebcd8ba7e36503569c648e686f17707b6f7b7d..4643003939318c162b6ff400a60c9164e32b7dab 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -94,9 +94,8 @@ var SearchBox = (function (_super) {
+     };
+     SearchBox.prototype.onEnd = function (state) {
+         this.status = "answered";
+-        if (this.getCurrentValue()) {
+-            this.selected = this.getCurrentValue();
+-        }
++        var choice = this.filterList.length ? this.filterList[this.pointer] : this.list[this.pointer];
++        this.selected = choice ? (choice.short || choice.name || '') : '';
+         this.render();
+         this.screen.done();
+         this.done(state.value);
+diff --git a/src/index.ts b/src/index.ts
+index 0b36a3051e592cd40e377ae8bc2ea496e2bed8fd..d3e673095ca4d390aa95180db198257c3d2e47ce 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -108,9 +108,8 @@ class SearchBox extends Base {
+ 
+ 	onEnd(state: any) {
+ 		this.status = "answered";
+-                if(this.getCurrentValue()) {
+-                    this.selected = this.getCurrentValue()
+-                }
++                const choice = this.filterList.length ? this.filterList[this.pointer] : this.list[this.pointer];
++                this.selected = choice ? (choice.short || choice.name || '') : '';
+ 		// Rerender prompt (and clean subline error)
+ 		this.render();
+ 

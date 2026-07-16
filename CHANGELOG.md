@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.4] - 2026-07-16
+
+### BUG 修复
+
+- **souche deploy**: 修复 `search-list` 选中流水线/分支后回显 `[object Object]` 的问题，打补丁 `inquirer-search-list` 改用 `choice.name` 作为选中回显文本
+
+## [1.0.3] - 2026-07-16
+
+### 功能补全
+
+- **souche deploy**: 所有 inquirer 列表选择统一使用 `search-list` 支持模糊搜索
+
 ## [1.0.2] - 2026-07-15
 
 ### 架构优化
