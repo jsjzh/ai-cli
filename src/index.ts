@@ -19,8 +19,8 @@ const HELP = `用法: cli [command] [subcommand]
   souche     内部工具 (deploy / sync)
 
 选项:
-  --help     显示帮助信息
-  --version  显示版本号
+  --help, -h  显示帮助信息
+  --version, -v  显示版本号
 
 示例:
   cli git push              # 直接进入 Git 推送流程
@@ -97,6 +97,11 @@ async function main() {
     return;
   }
 
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log(HELP);
+    return;
+  }
+
   const [command, subcommand] = args;
 
   if (command) {
@@ -129,11 +134,6 @@ async function main() {
         console.log(HELP);
         return;
     }
-  }
-
-  if (args.includes('--help') || args.includes('-h')) {
-    console.log(HELP);
-    return;
   }
 
   const { picked } = await inquirer.prompt([

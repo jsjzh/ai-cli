@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn, getErrorMessage } from '../../utils/exec';
 import { detectPackageManager } from '../../utils/node';
 
 const cacheCommands: Record<string, string[]> = {
@@ -32,6 +32,6 @@ export default async function cache() {
     spawn(pm, cacheCommands[pm], { stdio: 'inherit' });
     console.log(`\n缓存清理完成`);
   } catch (error) {
-    console.error(`\n缓存清理失败:`, (error as Error).message);
+    console.error(`\n缓存清理失败:`, getErrorMessage(error));
   }
 }

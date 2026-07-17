@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn, getErrorMessage } from '../../utils/exec';
 
 export default async function clone() {
   const answers = await inquirer.prompt([
@@ -52,6 +52,6 @@ export default async function clone() {
     const projectName = answers.name || answers.address.split('/').pop()!.replace('.git', '');
     console.log(`\n克隆成功！接下来可以执行: cd ${projectName}`);
   } catch (error) {
-    console.error(`\n克隆失败:`, (error as Error).message);
+    console.error(`\n克隆失败:`, getErrorMessage(error));
   }
 }

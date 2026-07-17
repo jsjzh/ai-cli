@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn, getErrorMessage } from '../../utils/exec';
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'fs';
 import path from 'path';
 import {
@@ -72,7 +72,7 @@ export default async function add() {
   try {
     spawn('ssh-keygen', sshKeygenArgs, { stdio: 'inherit' });
   } catch (error) {
-    console.error('生成密钥失败:', (error as Error).message);
+    console.error('生成密钥失败:', getErrorMessage(error));
     return;
   }
 

@@ -11,6 +11,8 @@ import {
   getBranches,
   runPipeline,
 } from '../../apis';
+import { getErrorMessage } from '../../utils/exec';
+import { readPackageJson } from '../../utils/node';
 import type { ApplicationItem, PipelineItem, BranchItem } from '../../types/api';
 
 const CONFIG_PATH = path.join(os.homedir(), '.aiclirc');
@@ -43,18 +45,6 @@ function readConfig(): Config {
 
 function writeConfig(config: Config) {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
-}
-
-function readPackageName(): string {
-  const pkgPath = path.join(process.cwd(), 'package.json');
-  if (!fs.existsSync(pkgPath)) {
-    throw new Error('当前目录未找到 package.json');
-  }
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-  if (!pkg.name) {
-    throw new Error('package.json 中缺少 name 字段');
-  }
-  return pkg.name;
 }
 
 async function ensureValidToken(): Promise<Config> {
@@ -100,7 +90,9 @@ export default async function deploy() {
     const config = await ensureValidToken();
     const token = config.security_token_inc;
 
-    const appName = readPackageName();
+    const pkg = readPackageJson();
+    if (!pkg.name) throw new Error('package.json 中缺少 name 字段');
+    const appName = pkg.name;
     const currentPath = process.cwd();
     console.log(`当前项目: ${appName}`);
 
@@ -203,6 +195,6 @@ export default async function deploy() {
       throw new Error(`构建触发失败: ${buildRes.msg}`);
     }
   } catch (error) {
-    console.error(`\n部署失败:`, (error as Error).message);
+    console.error(`\n部署失败:`, getErrorMessage(error));
   }
 }

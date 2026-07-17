@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFileSync, renameSync } from 'fs';
 import { homedir } from 'os';
 import path from 'path';
+import { getErrorMessage } from './exec';
 
 export interface GSConfigItem {
   origin: string;
@@ -33,6 +34,7 @@ function readAiclirc(): Record<string, unknown> {
   try {
     return JSON.parse(readFileSync(AICLIRC_PATH, 'utf8'));
   } catch {
+    console.error('~/.aiclirc 解析失败，将使用默认配置');
     return {};
   }
 }
@@ -52,8 +54,8 @@ function migrateOldConfig(): void {
     writeAiclirc(aiclirc);
     renameSync(OLD_GS_CONFIG_PATH, OLD_GS_CONFIG_PATH + '.bak');
     console.log('已迁移 ~/.ssh/gs-config.json → ~/.aiclirc (原文件已备份为 .bak)');
-  } catch {
-    // 迁移失败不阻塞
+  } catch (err) {
+    console.error('配置迁移 ~/.ssh/gs-config.json → ~/.aiclirc 失败:', getErrorMessage(err));
   }
 }
 

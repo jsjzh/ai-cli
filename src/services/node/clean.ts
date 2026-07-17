@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn, getErrorMessage } from '../../utils/exec';
 import { existsSync, rmSync } from 'fs';
 import { detectPackageManager, lockFiles } from '../../utils/node';
 
@@ -37,6 +37,6 @@ export default async function clean() {
 
     console.log(`\n清除并重装完成`);
   } catch (error) {
-    console.error(`\n操作失败:`, (error as Error).message);
+    console.error(`\n操作失败:`, getErrorMessage(error));
   }
 }

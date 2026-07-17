@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn, getErrorMessage } from '../../utils/exec';
 import { getActiveConfigs, formatConfigLine, GSConfigItem } from '../../utils/gs-config';
 import { hasGitRepo } from '../../utils/git';
 
@@ -54,6 +54,6 @@ export default async function use() {
     console.log(`  user.name = ${config.username}`);
     console.log(`  user.email = ${config.useremail}`);
   } catch (error) {
-    console.error(`设置失败:`, (error as Error).message);
+    console.error(`设置失败:`, getErrorMessage(error));
   }
 }

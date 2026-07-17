@@ -1,8 +1,6 @@
 import inquirer from 'inquirer';
-import { exec, spawn } from '../../utils/exec';
+import { exec, spawn, getErrorMessage } from '../../utils/exec';
 import { getCurrentBranch } from './pull';
-import Fuse from 'fuse.js';
-
 export default async function rebase() {
   try {
     const currentBranch = getCurrentBranch();
@@ -17,28 +15,25 @@ export default async function rebase() {
       return;
     }
 
-    const fuse = new Fuse(branches, { threshold: 0.4 });
-
     const { input } = await inquirer.prompt([
       {
         type: 'input',
         name: 'input',
-        message: '请输入目标分支名 (模糊匹配):',
+        message: '请输入目标分支名 (匹配已有分支，或直接输入新分支名)',
         validate: (v: string) => v.trim().length > 0 || '分支名不能为空',
       },
     ]);
 
-    const matched = fuse.search(input);
+    const matched = branches.filter((b) => b.includes(input));
     let targetBranch = input;
     if (matched.length > 0) {
-      const matchedNames = matched.map((m) => m.item);
       const { picked } = await inquirer.prompt([
         {
           type: 'search-list',
           name: 'picked',
           message: `匹配到以下分支，请选择:`,
           choices: [
-            ...matchedNames,
+            ...matched,
             new inquirer.Separator(),
             { name: `直接使用 "${input}"`, value: input },
           ],
@@ -63,6 +58,6 @@ export default async function rebase() {
 
     console.log(`\n变基完成: ${currentBranch} 已基于 ${targetBranch}`);
   } catch (error) {
-    console.error(`\n变基失败:`, (error as Error).message);
+    console.error(`\n变基失败:`, getErrorMessage(error));
   }
 }

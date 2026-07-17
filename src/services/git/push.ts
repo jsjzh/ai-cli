@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { exec, spawn } from '../../utils/exec';
+import { exec, spawn, getErrorMessage } from '../../utils/exec';
 import { selectFilesAndStage } from '../../utils/git';
 import pull, { getCurrentBranch } from './pull';
 
@@ -149,6 +149,6 @@ export default async function push() {
 
     console.log(`\nbranch ${branch} 提交成功，提交内容为：${commitMessage}`);
   } catch (error) {
-    console.error(`\n操作失败:`, (error as Error).message);
+    console.error(`\n操作失败:`, getErrorMessage(error));
   }
 }

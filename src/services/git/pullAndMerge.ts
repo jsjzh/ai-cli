@@ -1,8 +1,6 @@
 import inquirer from 'inquirer';
-import { exec, spawn } from '../../utils/exec';
+import { exec, spawn, getErrorMessage } from '../../utils/exec';
 import { getCurrentBranch } from './pull';
-import Fuse from 'fuse.js';
-
 export default async function pullAndMerge() {
   try {
     const originalBranch = getCurrentBranch();
@@ -17,28 +15,25 @@ export default async function pullAndMerge() {
       return;
     }
 
-    const fuse = new Fuse(branches, { threshold: 0.4 });
-
     const { input } = await inquirer.prompt([
       {
         type: 'input',
         name: 'input',
-        message: '请输入分支名 (模糊匹配已有分支，或直接输入新分支名)',
+        message: '请输入分支名 (匹配已有分支，或直接输入新分支名)',
         validate: (v: string) => v.trim().length > 0 || '分支名不能为空',
       },
     ]);
 
-    const matched = fuse.search(input);
+    const matched = branches.filter((b) => b.includes(input));
     let targetBranch = input;
     if (matched.length > 0) {
-      const matchedNames = matched.map((m) => m.item);
       const { picked } = await inquirer.prompt([
         {
           type: 'search-list',
           name: 'picked',
           message: `"${input}" 匹配到以下分支，请选择:`,
           choices: [
-            ...matchedNames,
+            ...matched,
             new inquirer.Separator(),
             { name: `直接使用 "${input}"`, value: input },
           ],
@@ -95,8 +90,8 @@ export default async function pullAndMerge() {
       console.error('操作中断，尝试切回原分支...');
       try {
         spawn('git', ['checkout', originalBranch], { stdio: 'inherit' });
-      } catch {
-        // ignore checkout failure
+      } catch (err) {
+        console.error('切回原分支失败:', getErrorMessage(err));
       }
       throw error;
     } finally {
@@ -106,6 +101,6 @@ export default async function pullAndMerge() {
       }
     }
   } catch (error) {
-    console.error(`\n操作失败:`, (error as Error).message);
+    console.error(`\n操作失败:`, getErrorMessage(error));
   }
 }

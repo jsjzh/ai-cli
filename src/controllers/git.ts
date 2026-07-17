@@ -1,4 +1,4 @@
-import inquirer from 'inquirer';
+import { createController } from '../utils/controller';
 import clone from '../services/git/clone';
 import pull from '../services/git/pull';
 import push from '../services/git/push';
@@ -11,61 +11,16 @@ import branch from '../services/git/branch';
 import rebase from '../services/git/rebase';
 
 export default async function gitController(action?: string) {
-  if (!action) {
-    const { picked } = await inquirer.prompt([
-      {
-        type: 'search-list',
-        name: 'picked',
-        message: '请选择 Git 操作',
-        choices: [
-          { name: '1. push - 提交推送', value: 'push' },
-          { name: '2. pull - 拉取更新', value: 'pull' },
-          { name: '3. clone - 克隆项目', value: 'clone' },
-          { name: '4. pullAndMerge - 拉取并合并分支', value: 'pullAndMerge' },
-          { name: '5. initAndPush - 初始化并推送', value: 'initAndPush' },
-          { name: '6. stash - 暂存管理', value: 'stash' },
-          { name: '7. log - 查看提交历史', value: 'log' },
-          { name: '8. status - 查看工作区状态', value: 'status' },
-          { name: '9. branch - 分支管理', value: 'branch' },
-          { name: '10. rebase - 变基合并', value: 'rebase' },
-        ],
-      },
-    ]);
-    action = picked;
-  }
-
-  switch (action) {
-    case 'clone':
-      await clone();
-      break;
-    case 'pull':
-      await pull();
-      break;
-    case 'push':
-      await push();
-      break;
-    case 'pullAndMerge':
-      await pullAndMerge();
-      break;
-    case 'initAndPush':
-      await initAndPush();
-      break;
-    case 'stash':
-      await stash();
-      break;
-    case 'log':
-      await log();
-      break;
-    case 'status':
-      await status();
-      break;
-    case 'branch':
-      await branch();
-      break;
-    case 'rebase':
-      await rebase();
-      break;
-    default:
-      break;
-  }
+  await createController('请选择 Git 操作', [
+    { name: '1. push - 提交推送', value: 'push' },
+    { name: '2. pull - 拉取更新', value: 'pull' },
+    { name: '3. clone - 克隆项目', value: 'clone' },
+    { name: '4. pullAndMerge - 拉取并合并分支', value: 'pullAndMerge' },
+    { name: '5. initAndPush - 初始化并推送', value: 'initAndPush' },
+    { name: '6. stash - 暂存管理', value: 'stash' },
+    { name: '7. log - 查看提交历史', value: 'log' },
+    { name: '8. status - 查看工作区状态', value: 'status' },
+    { name: '9. branch - 分支管理', value: 'branch' },
+    { name: '10. rebase - 变基合并', value: 'rebase' },
+  ], action, { clone, pull, push, pullAndMerge, initAndPush, stash, log, status, branch, rebase });
 }

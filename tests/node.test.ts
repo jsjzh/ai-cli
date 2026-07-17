@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { existsSync } from 'fs';
-import { detectPackageManager, lockFiles } from '../src/utils/node';
+import { existsSync, readFileSync } from 'fs';
+import { detectPackageManager, lockFiles, readPackageJson } from '../src/utils/node';
 
 vi.mock('fs', async () => {
   const actual = await vi.importActual('fs');
-  return { ...actual, existsSync: vi.fn() };
+  return { ...actual, existsSync: vi.fn(), readFileSync: vi.fn() };
 });
 
 describe('detectPackageManager', () => {
@@ -39,5 +39,24 @@ describe('lockFiles', () => {
       yarn: 'yarn.lock',
       npm: 'package-lock.json',
     });
+  });
+});
+
+describe('readPackageJson', () => {
+  beforeEach(() => {
+    vi.mocked(existsSync).mockReset();
+    vi.mocked(readFileSync).mockReset();
+  });
+
+  it('returns parsed package.json when file exists', () => {
+    vi.mocked(existsSync).mockReturnValue(true);
+    vi.mocked(readFileSync).mockReturnValue('{ "name": "test", "scripts": { "dev": "node index.js" } }');
+    const pkg = readPackageJson();
+    expect(pkg).toEqual({ name: 'test', scripts: { dev: 'node index.js' } });
+  });
+
+  it('returns empty object when package.json does not exist', () => {
+    vi.mocked(existsSync).mockReturnValue(false);
+    expect(readPackageJson()).toEqual({});
   });
 });

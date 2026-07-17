@@ -1,17 +1,16 @@
-import { spawn } from '../../utils/exec';
+import { spawn, getErrorMessage } from '../../utils/exec';
 import { detectPackageManager } from '../../utils/node';
 
 export default async function install() {
   const pm = detectPackageManager();
-  const cmd = pm === 'yarn' ? 'yarn' : pm;
 
   console.log(`检测到包管理器: ${pm}`);
-  console.log(`执行命令: ${cmd} install\n`);
+  console.log(`执行命令: ${pm} install\n`);
 
   try {
-    spawn(cmd, ['install'], { stdio: 'inherit' });
+    spawn(pm, ['install'], { stdio: 'inherit' });
     console.log(`\n依赖安装完成`);
   } catch (error) {
-    console.error(`\n安装失败:`, (error as Error).message);
+    console.error(`\n安装失败:`, getErrorMessage(error));
   }
 }

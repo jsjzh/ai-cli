@@ -1,21 +1,13 @@
 import inquirer from 'inquirer';
 import { spawn } from '../../utils/exec';
-import { detectPackageManager } from '../../utils/node';
-import fs from 'fs';
-import path from 'path';
+import { detectPackageManager, readPackageJson } from '../../utils/node';
 
 export default async function run() {
-  const pkgPath = path.join(process.cwd(), 'package.json');
-  if (!fs.existsSync(pkgPath)) {
-    console.log('当前目录未找到 package.json');
-    return;
-  }
-
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+  const pkg = readPackageJson();
   const scripts = pkg.scripts;
 
   if (!scripts || Object.keys(scripts).length === 0) {
-    console.log('package.json 中没有定义 scripts');
+    console.log('当前目录未找到 package.json 或未定义 scripts');
     return;
   }
 

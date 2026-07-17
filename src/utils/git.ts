@@ -13,8 +13,10 @@ export async function selectFilesAndStage(): Promise<boolean> {
     .split('\n')
     .filter(Boolean)
     .map((line) => {
-      const file = line.trim().split(/\s+/).pop()!;
-      return { name: file, value: file, checked: false };
+      const entry = line.trim().slice(3);
+      const file = entry.includes(' -> ') ? entry.split(' -> ').pop()! : entry;
+      const name = file.startsWith('"') && file.endsWith('"') ? file.slice(1, -1) : file;
+      return { name, value: name };
     });
 
   if (files.length === 0) {

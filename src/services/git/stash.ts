@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { exec, spawn } from '../../utils/exec';
+import { exec, spawn, getErrorMessage } from '../../utils/exec';
 
 export default async function stash() {
   try {
@@ -84,6 +84,6 @@ export default async function stash() {
       }
     }
   } catch (error) {
-    console.error('\n操作失败:', (error as Error).message);
+    console.error('\n操作失败:', getErrorMessage(error));
   }
 }

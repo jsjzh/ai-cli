@@ -1,6 +1,5 @@
-import { exec } from '../../utils/exec';
-import fs from 'fs';
-import path from 'path';
+import { exec, getErrorMessage } from '../../utils/exec';
+import { readPackageJson } from '../../utils/node';
 
 export default async function sync() {
   try {
@@ -9,12 +8,7 @@ export default async function sync() {
     console.log(`当前 registry: ${originalRegistry}`);
     console.log(`当前 Node 版本: ${originalNode}`);
 
-    const pkgPath = path.join(process.cwd(), 'package.json');
-    if (!fs.existsSync(pkgPath)) {
-      console.log('当前目录下未找到 package.json');
-      return;
-    }
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    const pkg = readPackageJson();
     const allDeps = [
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.devDependencies || {}),
@@ -54,6 +48,6 @@ echo "已恢复 Node 版本: ${nodeVersion}"
 
     exec(`bash -c '${script}'`, { stdio: 'inherit' });
   } catch (error) {
-    console.error(`\n操作失败:`, (error as Error).message);
+    console.error(`\n操作失败:`, getErrorMessage(error));
   }
 }

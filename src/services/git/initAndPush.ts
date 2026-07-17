@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn, getErrorMessage } from '../../utils/exec';
 import { hasGitRepo, selectFilesAndStage } from '../../utils/git';
 import { commitTypes } from './push';
 
@@ -79,6 +79,6 @@ export default async function initAndPush() {
 
     console.log(`\n推送成功，分支为: ${answers.branch}，提交内容为：${commitMessage}`);
   } catch (error) {
-    console.error(`\n操作失败:`, (error as Error).message);
+    console.error(`\n操作失败:`, getErrorMessage(error));
   }
 }

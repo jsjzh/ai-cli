@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.0.6] - 2026-07-17
+
+### BUG 修复
+
+- **cli --help**: 修复 `cli --help` 被当作未知命令的问题，全局帮助现在正确显示
+- **utils/git**: 修复 `git status --porcelain` 中含空格文件名解析错误
+- **错误处理**: 创建 `getErrorMessage()` 统一处理非 Error 抛出，替换 15 处 `(error as Error).message`
+- **空 catch**: `readAiclirc` 解析失败、配置迁移失败、切回原分支失败添加错误输出
+
+### 架构优化
+
+- **readPackageJson**: 抽取共享工具函数，消除 `run.ts`/`sync.ts`/`deploy.ts` 中重复的 `package.json` 读取
+- **createController**: 抽取共享控制器工厂，4 个控制器减少 ~127 行样板代码
+- **install.ts**: 移除冗余的 `cmd` 变量（三元运算恒等）
+
+### 功能补全
+
+- **帮助文本**: `-v` / `-h` 短选项加入帮助文本
+
+### 移除
+
+- **fuse.js**: 移除模糊搜索依赖；pullAndMerge / rebase 改为子串匹配
+
+### 测试
+
+- **getErrorMessage**: 新增 4 个测试用例（Error / string / object / null）
+- **readPackageJson**: 新增 2 个测试用例（存在 / 不存在）
+
 ## [1.0.5] - 2026-07-17
 
 ### BUG 修复
