@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.5] - 2026-07-17
+
+### BUG 修复
+
+- **git push**: 修复在无远程跟踪的分支（如新分支）上 push 时 `git pull` 和 `git log origin/branch..HEAD` 崩溃的问题；自动检测远程分支是否存在，不存在则跳过拉取并使用 `-u` 推送
+
+### 功能补全
+
+- **git branch**: 新增 `switch`（切换分支）选项，放在操作列表第一位；通过 search-list 选择目标分支并执行 `git checkout`
+
 ## [1.0.4] - 2026-07-16
 
 ### BUG 修复

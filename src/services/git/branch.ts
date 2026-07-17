@@ -2,17 +2,45 @@ import inquirer from 'inquirer';
 import { exec, spawn } from '../../utils/exec';
 
 export default async function branch() {
+  const branches = exec('git branch', { encoding: 'utf8' })
+    .split('\n')
+    .map((b) => b.trim())
+    .filter(Boolean);
+  const currentBranch = branches.find((b) => b.startsWith('*'))?.replace(/^\*\s*/, '') || '';
+
   const { action } = await inquirer.prompt([
     {
       type: 'search-list',
       name: 'action',
       message: '请选择分支操作',
       choices: [
-        { name: '1. create - 创建分支', value: 'create' },
-        { name: '2. delete - 删除分支', value: 'delete' },
+        { name: '1. switch - 切换分支', value: 'switch' },
+        { name: '2. create - 创建分支', value: 'create' },
+        { name: '3. delete - 删除分支', value: 'delete' },
       ],
     },
   ]);
+
+  if (action === 'switch') {
+    const others = branches
+      .map((b) => b.replace(/^\*\s*/, ''))
+      .filter((b) => b !== currentBranch);
+    if (others.length === 0) {
+      console.log('没有其他分支可供切换');
+      return;
+    }
+    const { target } = await inquirer.prompt([
+      {
+        type: 'search-list',
+        name: 'target',
+        message: '请选择要切换到的分支:',
+        choices: others.map((b) => ({ name: b, value: b })),
+      },
+    ]);
+    spawn('git', ['checkout', target], { stdio: 'inherit' });
+    console.log(`\n已切换到分支: ${target}`);
+    return;
+  }
 
   if (action === 'create') {
     const { name, fromCurrent } = await inquirer.prompt([
