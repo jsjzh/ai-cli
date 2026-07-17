@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn } from '../../utils/exec.js';
 import { existsSync, rmSync } from 'fs';
-import { detectPackageManager, lockFiles } from '../../utils/node';
+import { detectPackageManager, lockFiles } from '../../utils/node.js';
 
 export default async function clean() {
   const pm = detectPackageManager();

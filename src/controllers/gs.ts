@@ -1,10 +1,10 @@
 import inquirer from 'inquirer';
-import add from '../services/gs/add';
-import list from '../services/gs/list';
-import test from '../services/gs/test';
-import use from '../services/gs/use';
-import del from '../services/gs/del';
-import current from '../services/gs/current';
+import add from '../services/gs/add.js';
+import list from '../services/gs/list.js';
+import test from '../services/gs/test.js';
+import use from '../services/gs/use.js';
+import del from '../services/gs/del.js';
+import current from '../services/gs/current.js';
 
 export default async function gsController(action?: string) {
   if (!action) {

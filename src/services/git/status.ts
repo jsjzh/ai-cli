@@ -1,4 +1,4 @@
-import { exec } from '../../utils/exec';
+import { exec } from '../../utils/exec.js';
 
 export default async function status() {
   const output = exec('git status', { encoding: 'utf8' });

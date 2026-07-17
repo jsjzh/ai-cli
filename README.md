@@ -13,6 +13,7 @@ pnpm link --global
 ```bash
 cli git push          # 跳过菜单，直接进入推送流程
 cli node clean        # 跳过菜单，直接进入清除重装
+cli tui               # 进入全屏 TUI 交互界面
 cli --help            # 查看帮助
 cli --version         # 查看版本
 ```
@@ -59,6 +60,31 @@ cli --version         # 查看版本
 | `clean`   | 删除 node_modules 和 lock 文件，重新安装    |
 | `cache`   | 清理包管理器缓存（pnpm store prune / yarn cache clean / npm cache clean） |
 
+### tui - TUI 交互界面
+
+全屏终端交互界面（基于 Ink + React），提供命令组导航和内联执行。
+
+```bash
+cli tui               # 进入 TUI
+```
+
+在 TUI 中输入：
+
+| 命令                        | 说明                          |
+| --------------------------- | ----------------------------- |
+| `/git`                      | 显示 Git 子命令列表并选择      |
+| `/git status`               | 内联执行 git status           |
+| `/git pull`                 | 内联执行 git pull             |
+| `/git log`                  | 内联查看提交历史              |
+| `/git push`                 | 内联推送（仅无变更时）        |
+| `/gs list`                  | 列出 SSH 配置                 |
+| `/gs current`               | 查看当前 Git 身份             |
+| `/node install`             | 安装依赖                      |
+| `/souche sync`              | 同步依赖到内部源              |
+| `/help`                     | 查看帮助                      |
+| `/home`                     | 返回首页                      |
+| `/exit`                     | 退出 TUI                      |
+
 ### souche - 内部工具
 
 | 命令     | 说明                                                         |
@@ -83,4 +109,4 @@ pnpm test         # 运行测试
 
 ## 技术栈
 
-TypeScript + Node.js + Inquirer（交互式提示）+ Chalk（彩色输出）+ Fuse.js（模糊搜索）
+TypeScript + Node.js + Inquirer（交互式提示）+ Chalk（彩色输出）+ Fuse.js（模糊搜索）+ Ink + React（TUI 渲染）

@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0] - 2026-07-17
+
+### 功能补全
+
+- **TUI 交互界面**: 新增 `cli tui` 命令，进入全屏终端交互界面（基于 Ink + React）
+  - 支持 `/git`, `/gs`, `/node`, `/souche` 命令组导航与命令选择
+  - 支持 `/git status`, `/git pull`, `/git log`, `/git push` 内联执行并显示输出
+  - 支持 `/gs list`, `/gs current`, `/node install`, `/souche sync` 内联执行
+  - 不支持的命令提示使用终端模式
+  - `/exit` 退出 TUI，`/help` 查看帮助，`/home` 返回首页
+- **ESM 迁移**: 项目从 CommonJS 迁移至 ES Modules（`"type": "module"`），所有相对路径导入添加 `.js` 扩展名
+
+### 工程化
+
+- **新增依赖**: `ink@^4`, `react@^18`, `ink-text-input`, `ink-select-input`（TUI 渲染引擎）
+- **TypeScript**: 启用 `jsx: "react-jsx"`，支持 `.tsx` 文件编译
+
 ## [1.0.4] - 2026-07-16
 
 ### BUG 修复

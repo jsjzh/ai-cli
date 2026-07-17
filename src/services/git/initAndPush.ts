@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
-import { hasGitRepo, selectFilesAndStage } from '../../utils/git';
-import { commitTypes } from './push';
+import { spawn } from '../../utils/exec.js';
+import { hasGitRepo, selectFilesAndStage } from '../../utils/git.js';
+import { commitTypes } from './push.js';
 
 export default async function initAndPush() {
   try {

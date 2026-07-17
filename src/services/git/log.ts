@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { exec } from '../../utils/exec';
+import { exec } from '../../utils/exec.js';
 
 export default async function log() {
   const { count } = await inquirer.prompt([

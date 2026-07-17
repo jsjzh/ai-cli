@@ -7,7 +7,7 @@ import type {
   ProjectInfoData,
   BranchItem,
   BuildRunData,
-} from '../types/api';
+} from '../types/api.js';
 
 const API = {
   SSO: 'https://sso.souche-inc.com',

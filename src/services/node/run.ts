@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
-import { detectPackageManager } from '../../utils/node';
+import { spawn } from '../../utils/exec.js';
+import { detectPackageManager } from '../../utils/node.js';
 import fs from 'fs';
 import path from 'path';
 

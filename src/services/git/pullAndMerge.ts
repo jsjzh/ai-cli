@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
-import { exec, spawn } from '../../utils/exec';
-import { getCurrentBranch } from './pull';
+import { exec, spawn } from '../../utils/exec.js';
+import { getCurrentBranch } from './pull.js';
 import Fuse from 'fuse.js';
 
 export default async function pullAndMerge() {

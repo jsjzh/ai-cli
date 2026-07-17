@@ -1,4 +1,4 @@
-import { exec, spawn } from '../../utils/exec';
+import { exec, spawn } from '../../utils/exec.js';
 
 export function getCurrentBranch(): string {
   return exec('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();

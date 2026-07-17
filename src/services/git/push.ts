@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
-import { exec, spawn } from '../../utils/exec';
-import { selectFilesAndStage } from '../../utils/git';
-import pull, { getCurrentBranch } from './pull';
+import { exec, spawn } from '../../utils/exec.js';
+import { selectFilesAndStage } from '../../utils/git.js';
+import pull, { getCurrentBranch } from './pull.js';
 
 export const commitTypes = [
   { name: '1. feat: 新功能、新特性', value: 'feat' },

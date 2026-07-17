@@ -1,4 +1,4 @@
-import { exec } from '../../utils/exec';
+import { exec } from '../../utils/exec.js';
 import fs from 'fs';
 import path from 'path';
 

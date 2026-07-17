@@ -1,9 +1,9 @@
 import inquirer from 'inquirer';
-import install from '../services/node/install';
-import update from '../services/node/update';
-import clean from '../services/node/clean';
-import cache from '../services/node/cache';
-import run from '../services/node/run';
+import install from '../services/node/install.js';
+import update from '../services/node/update.js';
+import clean from '../services/node/clean.js';
+import cache from '../services/node/cache.js';
+import run from '../services/node/run.js';
 
 export default async function nodeController(action?: string) {
   if (!action) {

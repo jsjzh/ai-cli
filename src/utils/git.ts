@@ -1,7 +1,7 @@
 import { existsSync } from 'fs';
 import path from 'path';
 import inquirer from 'inquirer';
-import { exec, spawn } from './exec';
+import { exec, spawn } from './exec.js';
 
 export function hasGitRepo(dir?: string): boolean {
   return existsSync(path.join(dir || process.cwd(), '.git'));

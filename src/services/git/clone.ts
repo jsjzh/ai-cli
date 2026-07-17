@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn } from '../../utils/exec.js';
 
 export default async function clone() {
   const answers = await inquirer.prompt([

@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn } from '../../utils/exec.js';
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'fs';
 import path from 'path';
 import {
@@ -8,7 +8,7 @@ import {
   readGSConfig,
   writeGSConfig,
   GSConfigItem,
-} from '../../utils/gs-config';
+} from '../../utils/gs-config.js';
 
 export default async function add() {
   const sshDir = getSSHDir();

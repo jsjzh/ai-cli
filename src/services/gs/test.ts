@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
-import { spawn } from '../../utils/exec';
+import { spawn } from '../../utils/exec.js';
 import chalk from 'chalk';
-import { getActiveConfigs, formatConfigLine, GSConfigItem } from '../../utils/gs-config';
+import { getActiveConfigs, formatConfigLine, GSConfigItem } from '../../utils/gs-config.js';
 
 export default async function test() {
   const activeConfigs = getActiveConfigs();

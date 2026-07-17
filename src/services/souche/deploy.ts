@@ -10,8 +10,9 @@ import {
   getProjectInfo,
   getBranches,
   runPipeline,
-} from '../../apis';
-import type { ApplicationItem, PipelineItem, BranchItem } from '../../types/api';
+} from '../../apis/index.js';
+import type { ApplicationItem, PipelineItem, BranchItem } from '../../types/api.js';
+
 
 const CONFIG_PATH = path.join(os.homedir(), '.aiclirc');
 

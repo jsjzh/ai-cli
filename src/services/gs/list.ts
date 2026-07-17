@@ -1,7 +1,7 @@
 import chalk from 'chalk';
-import { spawn } from '../../utils/exec';
-import { getActiveConfigs, GSConfigItem } from '../../utils/gs-config';
-import { hasGitRepo } from '../../utils/git';
+import { spawn } from '../../utils/exec.js';
+import { getActiveConfigs, GSConfigItem } from '../../utils/gs-config.js';
+import { hasGitRepo } from '../../utils/git.js';
 
 export default async function list() {
   const activeConfigs = getActiveConfigs();

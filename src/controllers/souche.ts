@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
-import sync from '../services/souche/sync';
-import deploy from '../services/souche/deploy';
+import sync from '../services/souche/sync.js';
+import deploy from '../services/souche/deploy.js';
 
 export default async function soucheController(action?: string) {
   if (!action) {

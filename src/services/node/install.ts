@@ -1,5 +1,5 @@
-import { spawn } from '../../utils/exec';
-import { detectPackageManager } from '../../utils/node';
+import { spawn } from '../../utils/exec.js';
+import { detectPackageManager } from '../../utils/node.js';
 
 export default async function install() {
   const pm = detectPackageManager();

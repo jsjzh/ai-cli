@@ -1,7 +1,7 @@
-import { spawn } from '../../utils/exec';
+import { spawn } from '../../utils/exec.js';
 import chalk from 'chalk';
-import { getActiveConfigs, GSConfigItem } from '../../utils/gs-config';
-import { hasGitRepo } from '../../utils/git';
+import { getActiveConfigs, GSConfigItem } from '../../utils/gs-config.js';
+import { hasGitRepo } from '../../utils/git.js';
 
 export default async function current() {
   const scope = hasGitRepo() ? 'local' : 'global';

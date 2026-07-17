@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { exec, spawn } from '../../utils/exec';
+import { exec, spawn } from '../../utils/exec.js';
 
 export default async function branch() {
   const { action } = await inquirer.prompt([

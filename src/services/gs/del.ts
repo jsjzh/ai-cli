@@ -10,7 +10,7 @@ import {
   getActiveConfigs,
   formatConfigLine,
   GSConfigItem,
-} from '../../utils/gs-config';
+} from '../../utils/gs-config.js';
 
 export default async function del() {
   const activeConfigs = getActiveConfigs();

@@ -1,14 +1,14 @@
 import inquirer from 'inquirer';
-import clone from '../services/git/clone';
-import pull from '../services/git/pull';
-import push from '../services/git/push';
-import pullAndMerge from '../services/git/pullAndMerge';
-import initAndPush from '../services/git/initAndPush';
-import stash from '../services/git/stash';
-import log from '../services/git/log';
-import status from '../services/git/status';
-import branch from '../services/git/branch';
-import rebase from '../services/git/rebase';
+import clone from '../services/git/clone.js';
+import pull from '../services/git/pull.js';
+import push from '../services/git/push.js';
+import pullAndMerge from '../services/git/pullAndMerge.js';
+import initAndPush from '../services/git/initAndPush.js';
+import stash from '../services/git/stash.js';
+import log from '../services/git/log.js';
+import status from '../services/git/status.js';
+import branch from '../services/git/branch.js';
+import rebase from '../services/git/rebase.js';
 
 export default async function gitController(action?: string) {
   if (!action) {

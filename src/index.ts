@@ -2,11 +2,14 @@
 
 import inquirer from 'inquirer';
 import SearchList from 'inquirer-search-list';
-import gitController from './controllers/git';
-import gsController from './controllers/gs';
-import nodeController from './controllers/node';
-import soucheController from './controllers/souche';
-import { version } from '../package.json';
+import gitController from './controllers/git.js';
+import gsController from './controllers/gs.js';
+import nodeController from './controllers/node.js';
+import soucheController from './controllers/souche.js';
+import tuiController from './controllers/tui.js';
+import { readFileSync } from 'fs';
+const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+const { version } = pkg;
 
 inquirer.registerPrompt('search-list', SearchList);
 
@@ -17,6 +20,7 @@ const HELP = `用法: cli [command] [subcommand]
   gs         Git SSH 配置管理 (add / list / test / use / del / current)
   node       Node.js 包管理 (run / install / update / clean / cache)
   souche     内部工具 (deploy / sync)
+  tui        进入 TUI 交互界面
 
 选项:
   --help     显示帮助信息
@@ -124,6 +128,9 @@ async function main() {
       case 'souche':
         await soucheController(subcommand);
         return;
+      case 'tui':
+        await tuiController();
+        return;
       default:
         console.log(`未知命令: ${command}\n`);
         console.log(HELP);
@@ -146,6 +153,7 @@ async function main() {
         { name: '2. gs - Git SSH 配置管理', value: 'gs' },
         { name: '3. node - Node.js 包管理', value: 'node' },
         { name: '4. souche - Souche 内部工具', value: 'souche' },
+        { name: '5. tui - TUI 交互界面', value: 'tui' },
       ],
     },
   ]);
@@ -162,6 +170,9 @@ async function main() {
       break;
     case 'souche':
       await soucheController();
+      break;
+    case 'tui':
+      await tuiController();
       break;
   }
 }
