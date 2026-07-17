@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { exec } from '../../utils/exec';
 
 export default async function log() {
@@ -20,6 +21,6 @@ export default async function log() {
   const output = exec(`git log --oneline --graph --decorate -${n}`, {
     encoding: 'utf8',
   });
-  console.log(`\n最近的 ${n} 条提交:\n`);
+  console.log(pc.bold(pc.cyan(`\n最近的 ${n} 条提交:\n`)));
   console.log(output);
 }

@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { exec, spawn, getErrorMessage } from '../../utils/exec';
 import { getCurrentBranch } from './pull';
 export default async function rebase() {
@@ -11,7 +12,7 @@ export default async function rebase() {
       .filter((b) => b !== currentBranch);
 
     if (branches.length === 0) {
-      console.log('没有其他分支可供变基');
+      console.log(pc.yellow('没有其他分支可供变基'));
       return;
     }
 
@@ -44,20 +45,20 @@ export default async function rebase() {
 
     const hasChanges = exec('git status --porcelain', { encoding: 'utf8' }).trim().length > 0;
     if (hasChanges) {
-      console.log('检测到未提交的更改，正在暂存...');
+      console.log(pc.cyan('▶ 检测到未提交的更改，正在暂存...'));
       spawn('git', ['stash'], { stdio: 'inherit' });
     }
 
-    console.log(`正在变基: ${currentBranch} -> ${targetBranch}`);
+    console.log(pc.cyan(`▶ 正在变基: ${currentBranch} -> ${targetBranch}`));
     spawn('git', ['rebase', targetBranch], { stdio: 'inherit' });
 
     if (hasChanges) {
-      console.log('正在恢复暂存的更改...');
+      console.log(pc.cyan('▶ 正在恢复暂存的更改...'));
       spawn('git', ['stash', 'pop'], { stdio: 'inherit' });
     }
 
-    console.log(`\n变基完成: ${currentBranch} 已基于 ${targetBranch}`);
+    console.log(pc.green(`\n✔ 变基完成: ${currentBranch} 已基于 ${targetBranch}`));
   } catch (error) {
-    console.error(`\n变基失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 变基失败:`), getErrorMessage(error));
   }
 }

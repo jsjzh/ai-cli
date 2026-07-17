@@ -83,4 +83,4 @@ pnpm test         # 运行测试
 
 ## 技术栈
 
-TypeScript + Node.js + Inquirer（交互式提示）+ Chalk（彩色输出）
+TypeScript + Node.js + Inquirer（交互式提示）+ Picocolors（彩色输出）+ cli-table3（表格排版）+ nanospinner（加载动画）

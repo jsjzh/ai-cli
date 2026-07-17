@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import { existsSync, readFileSync, writeFileSync, unlinkSync } from 'fs';
 import path from 'path';
-import chalk from 'chalk';
+import pc from 'picocolors';
 import {
   getSSHDir,
   getConfigPath,
@@ -16,7 +16,7 @@ export default async function del() {
   const activeConfigs = getActiveConfigs();
 
   if (activeConfigs.length === 0) {
-    console.log('暂无 SSH 配置');
+    console.log(pc.yellow('暂无 SSH 配置'));
     return;
   }
 
@@ -73,6 +73,6 @@ export default async function del() {
   });
   writeGSConfig(updatedConfigs);
 
-  console.log(chalk.green(`\n已删除 SSH 配置: ${config.origin}`));
+  console.log(pc.green(`\n✔ 已删除 SSH 配置: ${config.origin}`));
   console.log(`请前往 ${config.host} 删除对应的公钥`);
 }

@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { exec, spawn, getErrorMessage } from '../../utils/exec';
 import { getCurrentBranch } from './pull';
 export default async function pullAndMerge() {
@@ -11,7 +12,7 @@ export default async function pullAndMerge() {
       .filter((b) => b !== originalBranch);
 
     if (branches.length === 0) {
-      console.log('没有其他分支可供合并');
+      console.log(pc.yellow('没有其他分支可供合并'));
       return;
     }
 
@@ -45,28 +46,28 @@ export default async function pullAndMerge() {
     const hasChanges = exec('git status --porcelain', { encoding: 'utf8' }).trim().length > 0;
     let stashed = false;
     if (hasChanges) {
-      console.log('检测到未提交的更改，正在暂存...');
+      console.log(pc.cyan('▶ 检测到未提交的更改，正在暂存...'));
       spawn('git', ['stash'], { stdio: 'inherit' });
       stashed = true;
     }
 
     try {
-      console.log(`正在切换到分支: ${targetBranch}`);
+      console.log(pc.cyan(`▶ 正在切换到分支: ${targetBranch}`));
       spawn('git', ['checkout', targetBranch], { stdio: 'inherit' });
 
-      console.log('正在拉取远程更新...');
+      console.log(pc.cyan('▶ 正在拉取远程更新...'));
       spawn('git', ['pull', 'origin', targetBranch], { stdio: 'inherit' });
 
-      console.log(`正在切换回分支: ${originalBranch}`);
+      console.log(pc.cyan(`▶ 正在切换回分支: ${originalBranch}`));
       spawn('git', ['checkout', originalBranch], { stdio: 'inherit' });
 
-      console.log(`正在合并分支: ${targetBranch}`);
+      console.log(pc.cyan(`▶ 正在合并分支: ${targetBranch}`));
       const headBefore = exec('git rev-parse HEAD', { encoding: 'utf8' }).trim();
       spawn('git', ['merge', targetBranch], { stdio: 'inherit' });
       const headAfter = exec('git rev-parse HEAD', { encoding: 'utf8' }).trim();
 
       if (headBefore === headAfter) {
-        console.log('没有需要合并的内容');
+        console.log(pc.yellow('没有需要合并的内容'));
         return;
       }
 
@@ -80,11 +81,11 @@ export default async function pullAndMerge() {
       ]);
 
       if (shouldPush) {
-        console.log('正在推送...');
+        console.log(pc.cyan('▶ 正在推送...'));
         spawn('git', ['push', 'origin', originalBranch], { stdio: 'inherit' });
-        console.log('推送成功');
+        console.log(pc.green('✔ 推送成功'));
       } else {
-        console.log(`请记得推送提交 (git push origin ${originalBranch})`);
+        console.log(pc.yellow(`请记得推送提交 (git push origin ${originalBranch})`));
       }
     } catch (error) {
       console.error('操作中断，尝试切回原分支...');
@@ -96,11 +97,11 @@ export default async function pullAndMerge() {
       throw error;
     } finally {
       if (stashed) {
-        console.log('正在恢复暂存的更改...');
+        console.log(pc.cyan('▶ 正在恢复暂存的更改...'));
         spawn('git', ['stash', 'pop'], { stdio: 'inherit' });
       }
     }
   } catch (error) {
-    console.error(`\n操作失败:`, getErrorMessage(error));
+    console.error(pc.red('\n✖ 操作失败:'), getErrorMessage(error));
   }
 }

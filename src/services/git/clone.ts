@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
 
 export default async function clone() {
@@ -48,10 +49,11 @@ export default async function clone() {
   }
 
   try {
+    console.log(pc.cyan('▶ 正在克隆项目...'));
     spawn('git', args, { stdio: 'inherit' });
     const projectName = answers.name || answers.address.split('/').pop()!.replace('.git', '');
-    console.log(`\n克隆成功！接下来可以执行: cd ${projectName}`);
+    console.log(pc.green(`\n✔ 克隆成功！接下来可以执行: cd ${projectName}`));
   } catch (error) {
-    console.error(`\n克隆失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 克隆失败:`), getErrorMessage(error));
   }
 }

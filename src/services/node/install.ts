@@ -1,16 +1,17 @@
+import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
 import { detectPackageManager } from '../../utils/node';
 
 export default async function install() {
   const pm = detectPackageManager();
 
-  console.log(`检测到包管理器: ${pm}`);
-  console.log(`执行命令: ${pm} install\n`);
+  console.log(pc.cyan(`▶ 检测到包管理器: ${pm}`));
 
   try {
+    console.log(pc.cyan(`▶ 执行: ${pm} install`));
     spawn(pm, ['install'], { stdio: 'inherit' });
-    console.log(`\n依赖安装完成`);
+    console.log(pc.green(`\n✔ 依赖安装完成`));
   } catch (error) {
-    console.error(`\n安装失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 安装失败:`), getErrorMessage(error));
   }
 }

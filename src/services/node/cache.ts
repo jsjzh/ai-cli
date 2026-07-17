@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
 import { detectPackageManager } from '../../utils/node';
 
@@ -11,7 +12,7 @@ const cacheCommands: Record<string, string[]> = {
 export default async function cache() {
   const pm = detectPackageManager();
 
-  console.log(`检测到包管理器: ${pm}`);
+  console.log(pc.cyan(`▶ 检测到包管理器: ${pm}`));
 
   const { confirm } = await inquirer.prompt([
     {
@@ -23,15 +24,15 @@ export default async function cache() {
   ]);
 
   if (!confirm) {
-    console.log('已取消');
+    console.log(pc.yellow('✖ 已取消'));
     return;
   }
 
   try {
-    console.log('正在清理缓存...');
+    console.log(pc.cyan('▶ 正在清理缓存...'));
     spawn(pm, cacheCommands[pm], { stdio: 'inherit' });
-    console.log(`\n缓存清理完成`);
+    console.log(pc.green(`\n✔ 缓存清理完成`));
   } catch (error) {
-    console.error(`\n缓存清理失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 缓存清理失败:`), getErrorMessage(error));
   }
 }

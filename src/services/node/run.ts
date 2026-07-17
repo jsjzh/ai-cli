@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { spawn } from '../../utils/exec';
 import { detectPackageManager, readPackageJson } from '../../utils/node';
 
@@ -7,7 +8,7 @@ export default async function run() {
   const scripts = pkg.scripts;
 
   if (!scripts || Object.keys(scripts).length === 0) {
-    console.log('当前目录未找到 package.json 或未定义 scripts');
+    console.log(pc.yellow('当前目录未找到 package.json 或未定义 scripts'));
     return;
   }
 
@@ -26,6 +27,6 @@ export default async function run() {
   const pm = detectPackageManager();
   const args = pm === 'yarn' ? [script] : ['run', script];
 
-  console.log(`\n> ${pm} ${args.join(' ')}\n`);
+  console.log(pc.cyan(`\n▶ ${pm} ${args.join(' ')}\n`));
   spawn(pm, args, { stdio: 'inherit' });
 }

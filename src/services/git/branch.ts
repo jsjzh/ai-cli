@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { exec, spawn } from '../../utils/exec';
 
 export default async function branch() {
@@ -26,7 +27,7 @@ export default async function branch() {
       .map((b) => b.replace(/^\*\s*/, ''))
       .filter((b) => b !== currentBranch);
     if (others.length === 0) {
-      console.log('没有其他分支可供切换');
+      console.log(pc.yellow('没有其他分支可供切换'));
       return;
     }
     const { target } = await inquirer.prompt([
@@ -38,7 +39,7 @@ export default async function branch() {
       },
     ]);
     spawn('git', ['checkout', target], { stdio: 'inherit' });
-    console.log(`\n已切换到分支: ${target}`);
+    console.log(pc.green(`\n✔ 已切换到分支: ${target}`));
     return;
   }
 
@@ -60,10 +61,10 @@ export default async function branch() {
 
     if (fromCurrent) {
       spawn('git', ['checkout', '-b', name], { stdio: 'inherit' });
-      console.log(`\n已创建并切换到分支: ${name}`);
+      console.log(pc.green(`\n✔ 已创建并切换到分支: ${name}`));
     } else {
       spawn('git', ['branch', name], { stdio: 'inherit' });
-      console.log(`\n已创建分支: ${name}`);
+      console.log(pc.green(`\n✔ 已创建分支: ${name}`));
     }
   } else {
     const branches = exec('git branch', { encoding: 'utf8' })
@@ -72,7 +73,7 @@ export default async function branch() {
       .filter(Boolean);
 
     if (branches.length <= 1) {
-      console.log('没有其他分支可供删除');
+      console.log(pc.yellow('没有其他分支可供删除'));
       return;
     }
 
@@ -96,7 +97,7 @@ export default async function branch() {
 
     if (confirm) {
       spawn('git', ['branch', '-D', target], { stdio: 'inherit' });
-      console.log(`\n已删除分支: ${target}`);
+      console.log(pc.green(`\n✔ 已删除分支: ${target}`));
     }
   }
 }

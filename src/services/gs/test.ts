@@ -1,13 +1,14 @@
 import inquirer from 'inquirer';
 import { spawn } from '../../utils/exec';
-import chalk from 'chalk';
+import { withSpinner } from '../../utils/spinner';
+import pc from 'picocolors';
 import { getActiveConfigs, formatConfigLine, GSConfigItem } from '../../utils/gs-config';
 
 export default async function test() {
   const activeConfigs = getActiveConfigs();
 
   if (activeConfigs.length === 0) {
-    console.log('暂无 SSH 配置');
+    console.log(pc.yellow('暂无 SSH 配置'));
     return;
   }
 
@@ -25,18 +26,15 @@ export default async function test() {
   ]);
 
   if (selected.length === 0) {
-    console.log('未选择任何配置');
+    console.log(pc.yellow('未选择任何配置'));
     return;
   }
 
   for (const config of selected) {
-    console.log(chalk.cyan(`\n正在测试 ${config.origin}...`));
     try {
-      const output = spawn('ssh', ['-T', config.origin], {
-        encoding: 'utf8',
-        timeout: 10000,
-      });
-      console.log(chalk.green(`\n${config.origin}: 连接成功`));
+      const output = withSpinner(`测试 ${config.origin}`, () =>
+        spawn('ssh', ['-T', config.origin], { encoding: 'utf8', timeout: 10000 }),
+      );
       if (output) console.log(output);
     } catch (error: any) {
       const output = error.stdout || error.stderr || error.message || '';
@@ -44,10 +42,10 @@ export default async function test() {
         typeof output === 'string' &&
         (output.includes('successfully') || output.includes('Hi') || output.includes('Welcome'))
       ) {
-        console.log(chalk.green(`\n${config.origin}: 连接成功`));
+        console.log(pc.green(`✔ ${config.origin}: 连接成功`));
         if (output) console.log(output);
       } else {
-        console.log(chalk.red(`\n${config.origin}: 连接失败`));
+        console.log(pc.red(`✖ ${config.origin}: 连接失败`));
         if (output) console.log(output);
       }
     }

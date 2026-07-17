@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { exec, spawn, getErrorMessage } from '../../utils/exec';
 
 export default async function stash() {
@@ -28,13 +29,13 @@ export default async function stash() {
         const args = ['stash', 'push'];
         if (message) args.push('-m', message);
         spawn('git', args, { stdio: 'inherit' });
-        console.log('\n暂存成功');
+        console.log(pc.green('✔ 暂存成功'));
         break;
       }
       case 'pop': {
         const list = exec('git stash list', { encoding: 'utf8' }).trim();
         if (!list) {
-          console.log('没有暂存的记录');
+          console.log(pc.yellow('没有暂存的记录'));
           return;
         }
 
@@ -65,9 +66,9 @@ export default async function stash() {
             spawn('git', ['stash', 'pop', `stash@{${index}}`], {
               stdio: 'inherit',
             });
-            console.log('\n暂存恢复成功');
+            console.log(pc.green('✔ 暂存恢复成功'));
           } catch {
-            console.error('\n暂存恢复失败，可能存在冲突，请手动处理');
+            console.error(pc.red('✖ 暂存恢复失败，可能存在冲突，请手动处理'));
           }
         }
         break;
@@ -75,15 +76,15 @@ export default async function stash() {
       case 'list': {
         const list = exec('git stash list', { encoding: 'utf8' }).trim();
         if (!list) {
-          console.log('没有暂存的记录');
+          console.log(pc.yellow('没有暂存的记录'));
           return;
         }
-        console.log('\n暂存列表:\n');
+        console.log(pc.bold(pc.cyan('\n暂存列表:\n')));
         console.log(list);
         break;
       }
     }
   } catch (error) {
-    console.error('\n操作失败:', getErrorMessage(error));
+    console.error(pc.red('\n操作失败:'), getErrorMessage(error));
   }
 }

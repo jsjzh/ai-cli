@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { exec, spawn, getErrorMessage } from '../../utils/exec';
 import { selectFilesAndStage } from '../../utils/git';
 import pull, { getCurrentBranch } from './pull';
@@ -34,15 +35,15 @@ export default async function push() {
     const remoteExists = hasRemoteBranch(branch);
 
     if (remoteExists) {
-      console.log('正在拉取远程更新...');
+      console.log(pc.cyan('▶ 正在拉取远程更新...'));
       try {
         await pull();
       } catch {
-        console.error('自动合并失败，请手动解决冲突后重试');
+        console.error(pc.red('✖ 自动合并失败，请手动解决冲突后重试'));
         return;
       }
     } else {
-      console.log('远程分支不存在，跳过拉取');
+      console.log(pc.yellow('▶ 远程分支不存在，跳过拉取'));
     }
 
     const status = exec('git status --porcelain', { encoding: 'utf8' });
@@ -51,25 +52,25 @@ export default async function push() {
     const hasUnstaged = lines.some((l) => l[1] !== ' ');
 
     if (!hasStaged && !hasUnstaged) {
-      console.log('没有新的变更，直接推送...');
+      console.log(pc.cyan('▶ 没有新的变更，直接推送...'));
       if (remoteExists) {
         const unpushed = exec(`git log origin/${branch}..HEAD --oneline`, {
           encoding: 'utf8',
         }).trim();
         spawn('git', ['push', 'origin', branch], { stdio: ['ignore', 'inherit', 'inherit'] });
-        console.log(`\nbranch ${branch} 推送成功`);
+        console.log(pc.green(`\n✔ branch ${branch} 推送成功`));
         if (unpushed) {
           console.log(`包含以下提交:\n${unpushed}`);
         }
       } else {
         spawn('git', ['push', '-u', 'origin', branch], { stdio: ['ignore', 'inherit', 'inherit'] });
-        console.log(`\nbranch ${branch} 推送成功（新分支，已建立远程跟踪）`);
+        console.log(pc.green(`\n✔ branch ${branch} 推送成功（新分支，已建立远程跟踪）`));
       }
       return;
     }
 
     if (hasStaged && !hasUnstaged) {
-      console.log('检测到已暂存的变更，直接提交推送...');
+      console.log(pc.cyan('▶ 检测到已暂存的变更，直接提交推送...'));
       const { content, type } = await inquirer.prompt([
         {
           type: 'input',
@@ -90,7 +91,7 @@ export default async function push() {
       spawn('git', ['commit', '-m', commitMessage], { stdio: ['ignore', 'inherit', 'inherit'] });
       const pushArgs = remoteExists ? ['push', 'origin', branch] : ['push', '-u', 'origin', branch];
       spawn('git', pushArgs, { stdio: ['ignore', 'inherit', 'inherit'] });
-      console.log(`\nbranch ${branch} 提交成功，提交内容为：${commitMessage}`);
+      console.log(pc.green(`\n✔ branch ${branch} 提交成功，提交内容为：${commitMessage}`));
       return;
     }
 
@@ -147,8 +148,8 @@ export default async function push() {
     const pushArgsEnd = remoteExists ? ['push', 'origin', branch] : ['push', '-u', 'origin', branch];
     spawn('git', pushArgsEnd, { stdio: ['ignore', 'inherit', 'inherit'] });
 
-    console.log(`\nbranch ${branch} 提交成功，提交内容为：${commitMessage}`);
+    console.log(pc.green(`\n✔ branch ${branch} 提交成功，提交内容为：${commitMessage}`));
   } catch (error) {
-    console.error(`\n操作失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 操作失败:`), getErrorMessage(error));
   }
 }

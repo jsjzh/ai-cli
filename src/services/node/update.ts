@@ -1,9 +1,12 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
 import { detectPackageManager } from '../../utils/node';
 
 export default async function update() {
   const pm = detectPackageManager();
+
+  console.log(pc.cyan(`▶ 检测到包管理器: ${pm}`));
 
   const { depType } = await inquirer.prompt([
     {
@@ -31,10 +34,9 @@ export default async function update() {
   }
 
   try {
-    console.log(`使用包管理器: ${pm}`);
     spawn(pm, args, { stdio: 'inherit' });
-    console.log(`\n依赖更新完成`);
+    console.log(pc.green(`\n✔ 依赖更新完成`));
   } catch (error) {
-    console.error(`\n更新失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 更新失败:`), getErrorMessage(error));
   }
 }

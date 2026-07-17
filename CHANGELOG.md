@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.7] - 2026-07-17
+
+### 架构优化
+
+- **chalk → picocolors**: 替换颜色库，更轻量（零依赖），API 一致
+- **输出美化**: 全项目统一输出风格：
+  - 步骤标题用 `▶` + `cyan bold` 标记
+  - 成功用 `✔` + `green`，失败用 `✖` + `red`
+  - 警告/取消用 `yellow`
+  - 次要信息用 `dim`
+- **cli-table3**: 替代 `gs/list.ts`、`gs/current.ts` 的手工 `padEnd` 表格排版
+- **withSpinner**: 创建 spinner 工具函数，用于 `gs/test.ts` SSH 连接测试（10s 超时，显示加载动画）
+
 ## [1.0.6] - 2026-07-17
 
 ### BUG 修复

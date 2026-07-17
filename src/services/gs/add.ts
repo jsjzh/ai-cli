@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'fs';
 import path from 'path';
@@ -72,7 +73,7 @@ export default async function add() {
   try {
     spawn('ssh-keygen', sshKeygenArgs, { stdio: 'inherit' });
   } catch (error) {
-    console.error('生成密钥失败:', getErrorMessage(error));
+    console.error(pc.red('✖ 生成密钥失败:'), getErrorMessage(error));
     return;
   }
 
@@ -101,7 +102,7 @@ Host ${answers.origin}
   filtered.push(newConfig);
   writeGSConfig(filtered);
 
-  console.log(`\nSSH 配置添加成功！`);
+  console.log(pc.green(`\n✔ SSH 配置添加成功！`));
   console.log(`\n请将以下公钥添加到 ${answers.host} 的 SSH Keys 中:\n`);
   console.log(publicKey);
 }

@@ -1,5 +1,6 @@
+import Table from 'cli-table3';
 import { spawn } from '../../utils/exec';
-import chalk from 'chalk';
+import pc from 'picocolors';
 import { getActiveConfigs, GSConfigItem } from '../../utils/gs-config';
 import { hasGitRepo } from '../../utils/git';
 
@@ -29,19 +30,15 @@ export default async function current() {
       keyType = match.keyType;
     }
 
-    const pad = (s: string, n: number) => s.padEnd(Math.max(s.length + 2, n));
+    const table = new Table({
+      head: ['scope', 'origin', 'username', 'useremail', 'host', 'keyType'],
+      style: { head: ['cyan', 'bold'], border: ['gray'] },
+    });
+    table.push([scope, origin, name, email, host, keyType]);
 
-    console.log(chalk.cyan(`\n当前 ${scope} 配置:\n`));
-    console.log(
-      chalk.white(
-        `  ${pad('scope', 8)}${pad('origin', 8)}${pad('username', 10)}${pad('useremail', 12)}host  keyType`,
-      ),
-    );
-    const line = `  ${pad(scope, 8)}${pad(origin, 8)}${pad(name, 10)}${pad(email, 12)}${pad(host, 6)}${keyType}`;
-    console.log(chalk.gray('  ' + '-'.repeat(line.length - 2)));
-    console.log(line);
-    console.log();
+    console.log(pc.bold(pc.cyan(`\n当前 ${scope} 配置:\n`)));
+    console.log(table.toString());
   } catch {
-    console.log(`暂无 ${scope} 的 git 配置`);
+    console.log(pc.yellow(`暂无 ${scope} 的 git 配置`));
   }
 }

@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
 import { getActiveConfigs, formatConfigLine, GSConfigItem } from '../../utils/gs-config';
 import { hasGitRepo } from '../../utils/git';
@@ -7,7 +8,7 @@ export default async function use() {
   const activeConfigs = getActiveConfigs();
 
   if (activeConfigs.length === 0) {
-    console.log('暂无 SSH 配置');
+    console.log(pc.yellow('暂无 SSH 配置'));
     return;
   }
 
@@ -50,10 +51,10 @@ export default async function use() {
     spawn('git', ['config', scopeFlag, 'user.email', config.useremail], {
       stdio: 'inherit',
     });
-    console.log(`\n已在 ${scope} 范围设置 git config：`);
+    console.log(pc.green(`\n✔ 已在 ${scope} 范围设置 git config：`));
     console.log(`  user.name = ${config.username}`);
     console.log(`  user.email = ${config.useremail}`);
   } catch (error) {
-    console.error(`设置失败:`, getErrorMessage(error));
+    console.error(pc.red(`✖ 设置失败:`), getErrorMessage(error));
   }
 }

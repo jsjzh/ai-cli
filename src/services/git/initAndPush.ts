@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
 import { hasGitRepo, selectFilesAndStage } from '../../utils/git';
 import { commitTypes } from './push';
@@ -6,7 +7,7 @@ import { commitTypes } from './push';
 export default async function initAndPush() {
   try {
     if (hasGitRepo()) {
-      console.log('当前项目已有 Git 配置，不能继续执行');
+      console.log(pc.yellow('当前项目已有 Git 配置，不能继续执行'));
       return;
     }
 
@@ -48,7 +49,7 @@ export default async function initAndPush() {
       },
     ]);
 
-    console.log('正在初始化 Git 仓库...');
+    console.log(pc.cyan('▶ 正在初始化 Git 仓库...'));
     spawn('git', ['init'], { stdio: 'inherit' });
 
     spawn('git', ['remote', 'add', 'origin', answers.remote], { stdio: 'inherit' });
@@ -59,7 +60,7 @@ export default async function initAndPush() {
       spawn('git', ['ls-remote', '--heads', 'origin', answers.branch], { encoding: 'utf8' }).trim()
         .length > 0;
     if (remoteHasContent) {
-      console.log('远程仓库已有内容，正在拉取并合并...');
+      console.log(pc.cyan('▶ 远程仓库已有内容，正在拉取并合并...'));
       spawn('git', ['pull', 'origin', answers.branch, '--allow-unrelated-histories'], {
         stdio: 'inherit',
       });
@@ -74,11 +75,11 @@ export default async function initAndPush() {
     const commitMessage = `${answers.type}: ${answers.content}`;
     spawn('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
 
-    console.log('正在推送...');
+    console.log(pc.cyan('▶ 正在推送...'));
     spawn('git', ['push', '-u', 'origin', answers.branch], { stdio: 'inherit' });
 
-    console.log(`\n推送成功，分支为: ${answers.branch}，提交内容为：${commitMessage}`);
+    console.log(pc.green(`\n✔ 推送成功，分支为: ${answers.branch}，提交内容为：${commitMessage}`));
   } catch (error) {
-    console.error(`\n操作失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 操作失败:`), getErrorMessage(error));
   }
 }

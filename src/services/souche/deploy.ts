@@ -11,6 +11,7 @@ import {
   getBranches,
   runPipeline,
 } from '../../apis';
+import pc from 'picocolors';
 import { getErrorMessage } from '../../utils/exec';
 import { readPackageJson } from '../../utils/node';
 import type { ApplicationItem, PipelineItem, BranchItem } from '../../types/api';
@@ -54,10 +55,10 @@ async function ensureValidToken(): Promise<Config> {
   if (token) {
     const res = await getUserInfo(token);
     if (res.success) {
-      console.log(`欢迎回来，${res.data.displayName}`);
+      console.log(pc.green(`✔ 欢迎回来，${res.data.displayName}`));
       return config;
     }
-    console.log('Token 已失效，请重新输入');
+    console.log(pc.yellow('Token 已失效，请重新输入'));
   }
 
   while (true) {
@@ -78,10 +79,10 @@ async function ensureValidToken(): Promise<Config> {
     if (res.success) {
       config.security_token_inc = token;
       writeConfig(config);
-      console.log(`Token 校验通过，欢迎 ${res.data.displayName}`);
+      console.log(pc.green(`✔ Token 校验通过，欢迎 ${res.data.displayName}`));
       return config;
     }
-    console.log(`Token 无效: ${res.msg}`);
+    console.log(pc.red(`✖ Token 无效: ${res.msg}`));
   }
 }
 
@@ -94,7 +95,7 @@ export default async function deploy() {
     if (!pkg.name) throw new Error('package.json 中缺少 name 字段');
     const appName = pkg.name;
     const currentPath = process.cwd();
-    console.log(`当前项目: ${appName}`);
+    console.log(pc.cyan(`▶ 当前项目: ${appName}`));
 
     let appId: string;
 
@@ -132,7 +133,7 @@ export default async function deploy() {
       throw new Error(`获取 projectId 失败: ${pidRes.msg}`);
     }
     const projectId = pidRes.data.projectId;
-    console.log(`Project ID: ${projectId}`);
+    console.log(pc.dim(`  Project ID: ${projectId}`));
 
     const pipeRes = await getPipelines(token, projectId);
     if (!pipeRes.success || pipeRes.data.length === 0) {
@@ -190,11 +191,11 @@ export default async function deploy() {
     });
 
     if (buildRes.success) {
-      console.log('✅ 构建已触发成功');
+      console.log(pc.green('✔ 构建已触发成功'));
     } else {
       throw new Error(`构建触发失败: ${buildRes.msg}`);
     }
   } catch (error) {
-    console.error(`\n部署失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 部署失败:`), getErrorMessage(error));
   }
 }

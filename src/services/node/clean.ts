@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
 import { existsSync, rmSync } from 'fs';
 import { detectPackageManager, lockFiles } from '../../utils/node';
@@ -6,7 +7,7 @@ import { detectPackageManager, lockFiles } from '../../utils/node';
 export default async function clean() {
   const pm = detectPackageManager();
 
-  console.log(`检测到包管理器: ${pm}`);
+  console.log(pc.cyan(`▶ 检测到包管理器: ${pm}`));
 
   const { confirm } = await inquirer.prompt([
     {
@@ -18,25 +19,25 @@ export default async function clean() {
   ]);
 
   if (!confirm) {
-    console.log('已取消');
+    console.log(pc.yellow('✖ 已取消'));
     return;
   }
 
   try {
-    console.log('正在清除 node_modules...');
+    console.log(pc.cyan('▶ 正在清除 node_modules...'));
     rmSync('node_modules', { recursive: true, force: true });
 
     const lockFile = lockFiles[pm];
     if (existsSync(lockFile)) {
       rmSync(lockFile);
-      console.log(`已删除 ${lockFile}`);
+      console.log(pc.dim(` 已删除 ${lockFile}`));
     }
 
-    console.log('正在重新安装依赖...');
+    console.log(pc.cyan('▶ 正在重新安装依赖...'));
     spawn(pm, ['install'], { stdio: 'inherit' });
 
-    console.log(`\n清除并重装完成`);
+    console.log(pc.green(`\n✔ 清除并重装完成`));
   } catch (error) {
-    console.error(`\n操作失败:`, getErrorMessage(error));
+    console.error(pc.red(`\n✖ 操作失败:`), getErrorMessage(error));
   }
 }
