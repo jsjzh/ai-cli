@@ -1,50 +1,127 @@
 @startuml
 !theme plain
-title <size:16><b>souche sync 流程</b></size>
+skinparam backgroundColor #FEFEFE
+skinparam participantPadding 20
+skinparam boxPadding 10
 
-actor User
-participant "soucheController" as Ctrl
-participant "sync.ts" as Svc
-participant "utils/exec.ts" as Exec
-participant "utils/node.ts" as NodeUtil
-database "Shell / nvm" as Shell
-database "npm registry" as Registry
+title <size:18><b>cli souche sync 流程架构图</b></size>
 
-User -> Ctrl : cli souche sync
-Ctrl -> Svc : sync()
+actor "用户" as User
+box "CLI 入口层" #E8F0FE
+  participant "src/index.ts" as Entry
+end box
+box "控制器层" #E6F4EA
+  participant "controllers/souche.ts" as Ctrl
+  participant "utils/controller.ts" as CtrlUtil
+end box
+box "核心服务层" #FCE4EC
+  participant "services/souche/sync.ts" as Sync
+end box
+box "工具层" #F3E5F5
+  participant "utils/node.ts" as NodeUtil
+  participant "utils/exec.ts" as ExecUtil
+end box
+box "外部环境" #E0F2F1
+  database "Shell / nvm / npm" as Shell
+  database "npm registry\nregistry.npm.souche-inc.com" as Registry
+  database "snpm\n(全局工具)" as Snpm
+end box
 
-Svc -> Exec : npm config get registry
-Exec -> Registry : 记录当前 registry
-Registry --> Svc : originalRegistry
+' ====== 入口 ======
+User -> Entry : cli souche sync
+activate Entry
+Entry -> Entry : process.argv = ['souche','sync']
+Entry -> Ctrl : soucheController('sync')
+deactivate Entry
 
-Svc -> Exec : node --version
-Exec --> Svc : originalNode
+' ====== 控制器 ======
+activate Ctrl
+Ctrl -> CtrlUtil : createController(action='sync', handlers)
+deactivate Ctrl
+activate CtrlUtil
+CtrlUtil -> Sync : handlers['sync']()
+deactivate CtrlUtil
 
-Svc -> NodeUtil : readPackageJson()
-NodeUtil --> Svc : dependencies + devDependencies
+' ====== 核心流程 ======
+activate Sync
 
+' Step 1: 记录当前环境
+Sync -> ExecUtil : npm config get registry
+ExecUtil -> Shell : npm config get registry
+Shell --> ExecUtil : originalRegistry
+ExecUtil --> Sync : registry
+
+Sync -> ExecUtil : node --version
+ExecUtil -> Shell : node --version
+Shell --> ExecUtil : originalNode
+ExecUtil --> Sync : node 版本
+
+Sync -> Sync : 打印原始 registry 和 Node 版本
+
+' Step 2: 读取依赖
+Sync -> NodeUtil : readPackageJson()
+NodeUtil --> Sync : dependencies + devDependencies
+
+Sync -> Sync : 合并所有依赖名
 alt 无依赖
-  Svc --> User : 提示退出
-else 有依赖
-  Svc -> Exec : exec bash 脚本
-  note right: source nvm.sh\nnvm use 12\n检测 snpm\nnpm config set registry\n分批 snpm sync &\nwait\n恢复 registry\n恢复 node 版本
-  Exec -> Shell : nvm use 12
-  Shell --> Exec : node@12
-  Exec -> Shell : command -v snpm
-  alt 不存在 snpm
-    Exec --> Svc : 报错退出
-  else 存在
-    Exec -> Shell : npm config set registry
-    Exec -> Shell : snpm sync pkg1 pkg2 ... &
-    loop 每批
-      Exec -> Shell : snpm sync batch
-    end
-    Exec -> Shell : wait
-    Exec -> Shell : npm config set registry (original)
-    Exec -> Shell : nvm use (original)
+  Sync --> User : 提示退出
+  deactivate Sync
   end
 end
 
-Svc --> User : ✔ 完成 / ✖ 失败
+Sync -> Sync : 计算分批 (每批 5 个, & 并行)
+
+note right
+  构造 bash 脚本字符串:
+    1. source nvm.sh
+    2. nvm use 12
+    3. 检测 snpm
+    4. npm config set registry
+    5. snpm sync batch1 &
+       snpm sync batch2 &
+       ...
+    6. wait
+    7. npm config set registry (原始)
+    8. nvm use (原始版本)
+end note
+
+' Step 3: 执行 bash 脚本
+Sync -> ExecUtil : exec(`bash -c '${script}'`)
+ExecUtil -> Shell : 执行拼接脚本
+activate Shell
+
+Shell -> Shell : source ~/.nvm/nvm.sh
+Shell -> Shell : nvm use 12
+note right: 切换到 node@12
+
+Shell -> Snpm : command -v snpm
+alt snpm 不存在
+  Shell --> User : 提示安装 snpm
+  deactivate Shell
+  deactivate Sync
+  end
+end
+
+Shell -> Registry : npm config set registry http://registry.npm.souche-inc.com/
+note right: 切换 registry
+
+Shell -> Snpm : snpm sync pkg1 pkg2 pkg3 pkg4 pkg5 &
+Shell -> Snpm : snpm sync pkg6 pkg7 ... &
+note right: 分批并行执行
+
+Shell -> Shell : wait (等待所有后台任务)
+
+Shell -> Registry : npm config set registry ${originalRegistry}
+note right: 恢复 registry
+
+Shell -> Shell : nvm use ${originalNode}
+note right: 恢复 Node 版本
+
+deactivate Shell
+
+Sync -> Sync : 脚本执行完成
+Sync --> User : 成功 / 失败
+
+deactivate Sync
 
 @enduml
