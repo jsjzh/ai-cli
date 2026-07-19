@@ -1,0 +1,50 @@
+@startuml
+!theme plain
+title <size:16><b>git initAndPush 流程</b></size>
+
+actor User
+participant "gitController" as Ctrl
+participant "initAndPush.ts" as Svc
+participant "utils/git.ts" as GitUtil
+participant "utils/exec.ts" as Exec
+database "git" as Git
+
+User -> Ctrl : cli git initAndPush
+Ctrl -> Svc : initAndPush()
+
+Svc -> GitUtil : hasGitRepo()
+GitUtil --> Svc : true/false
+
+alt 已有 .git
+  Svc --> User : ⚠️ 提示退出
+else 未初始化
+  User <-> Svc : 输入远端地址
+  User <-> Svc : 输入分支 (默认 master)
+  User <-> Svc : 输入提交内容 & 类型
+  User <-> Svc : 选择范围 (all/select)
+
+  Svc -> Exec : spawn git init
+  Exec -> Git : git init
+  Svc -> Exec : spawn git remote add origin
+  Exec -> Git : git remote add origin
+  Svc -> Exec : spawn git checkout -b
+  Exec -> Git : git checkout -b
+
+  Svc -> Exec : git ls-remote --heads
+  Exec -> Git : 检测远程
+  alt 远程有内容
+    Svc -> Exec : spawn git pull --allow-unrelated-histories
+  end
+
+  alt all
+    Svc -> Exec : spawn git add .
+  else select
+    Svc -> GitUtil : selectFilesAndStage()
+  end
+
+  Svc -> Exec : spawn git commit -m
+  Svc -> Exec : spawn git push -u origin
+  Svc --> User : ✔ 推送成功
+end
+
+@enduml

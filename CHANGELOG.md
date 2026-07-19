@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.9] - 2026-07-19
+
+### 功能补全
+
+- **原始需求归档**: 将所有原始需求文档整理至 `agents/原始需求/`，排除 undo 需求
+- **最终结果文档**: 为 4 个原始需求（_init、gitInitAndPush、gitPullAndMerge、soucheSync）生成需求分析.md 和流程架构.puml
+- **souche-deploy-flow.puml**: 在项目根目录生成 `cli souche deploy` 的 PlantUML 流程架构图
+
 ## [1.0.8] - 2026-07-18
 
 ### 架构优化

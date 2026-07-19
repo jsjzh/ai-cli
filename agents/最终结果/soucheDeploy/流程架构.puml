@@ -1,0 +1,111 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+title <size:18><b>cli souche deploy 流程架构图</b></size>
+
+actor "用户" as User
+box "CLI 入口层" #E8F0FE
+  participant "src/index.ts" as Entry
+end box
+box "控制器层" #E6F4EA
+  participant "controllers/souche.ts" as Ctrl
+  participant "utils/controller.ts" as CtrlUtil
+end box
+box "配置层" #FFF3E0
+  database "~/.aiclirc" as ConfigFile
+end box
+box "核心服务层" #FCE4EC
+  participant "services/souche/deploy.ts" as Deploy
+end box
+box "工具层" #F3E5F5
+  participant "utils/node.ts" as NodeUtil
+  participant "utils/exec.ts" as ExecUtil
+end box
+box "外部 API 层" #E0F2F1
+  participant "SSO\nsso.souche-inc.com" as SSO
+  participant "CYBERTRON\ncybertron-application-api\n.souche-inc.com" as Cybertron
+  participant "DEVOPS\nwireless-devops\n.souche-inc.com" as Devops
+end box
+
+' ====== 入口 ======
+User -> Entry : cli souche deploy
+activate Entry
+Entry -> Entry : process.argv = ['souche','deploy']
+Entry -> Ctrl : soucheController('deploy')
+deactivate Entry
+
+' ====== 控制器 ======
+activate Ctrl
+Ctrl -> CtrlUtil : createController(action='deploy', handlers)
+deactivate Ctrl
+activate CtrlUtil
+CtrlUtil -> Deploy : handlers['deploy']()
+deactivate CtrlUtil
+
+' ====== 部署流程 ======
+activate Deploy
+
+' --- Step 1: Token 校验 ---
+Deploy -> ConfigFile : readConfig()
+ConfigFile --> Deploy : config
+Deploy -> Deploy : 判断 token 是否存在且有效
+Deploy -> SSO : GET /httpApi/getAuthZ.json\n_header: _security_token_inc
+SSO --> Deploy : UserInfoData
+Deploy -> Deploy : 校验失败? 弹密码输入
+User <-> Deploy : inquirer 密码输入
+Deploy -> ConfigFile : writeConfig(token)
+note right: 首次配置或 token 失效时触发
+
+' --- Step 2: 读取项目名 ---
+Deploy -> NodeUtil : readPackageJson()
+NodeUtil --> Deploy : pkg.name
+
+' --- Step 3: 应用匹配 ---
+Deploy -> ConfigFile : readConfig().bindings[cwd]
+ConfigFile --> Deploy : binding?
+Deploy -> Deploy : 检查是否有缓存的 appId
+alt 未缓存或名称不匹配
+  Deploy -> Cybertron : GET /application/list\n?appName={name}&page=1&pageSize=20
+  Cybertron --> Deploy : ApplicationListData
+  User <-> Deploy : inquirer search-list 选应用
+  Deploy -> ConfigFile : writeConfig({ cwd → appId })
+else 命中缓存
+  note right: 直接复用已绑定的 appId
+end
+
+' --- Step 4: 查 ProjectId ---
+Deploy -> Devops : GET /api/project/findProjectIdbyAppId\n?appId={appId}
+Devops --> Deploy : ProjectIdData.projectId
+
+' --- Step 5: 选流水线 ---
+Deploy -> Devops : GET /api/project/pipelines\n?projectId={projectId}
+Devops --> Deploy : PipelineItem[]
+User <-> Deploy : inquirer search-list 选流水线
+
+' --- Step 6: 查 GitLab ID ---
+Deploy -> Devops : GET /api/project/info\n?projectId={projectId}
+Devops --> Deploy : ProjectInfoData.gitlabProjectId
+
+' --- Step 7: 选分支 ---
+Deploy -> Devops : GET /api/gitlab/branches\n?gitlabProjectId={id}
+Devops --> Deploy : BranchItem[]
+User <-> Deploy : inquirer search-list 选分支
+
+' --- Step 8: 确认并触发 ---
+Deploy -> Deploy : 打印部署汇总信息
+Deploy -> Devops : POST /api/project/pipeline/run\n_body: {projectId, projectPipelineId, branch, commitId}
+Devops --> Deploy : BuildRunData
+Deploy -> Deploy : 打印成功/失败
+Deploy --> User : pc.green('✔ 构建已触发成功')\n或 pc.red('✖ 部署失败')
+
+' --- 错误处理 ---
+Deploy -> ExecUtil : getErrorMessage(error) (on error)
+ExecUtil --> Deploy : error message string
+Deploy --> User : pc.red('✖ 部署失败: {msg}')
+
+deactivate Deploy
+
+@enduml

@@ -1,0 +1,94 @@
+@startuml
+!theme plain
+title <size:18><b>CLI 命令行工具集 — 整体架构</b></size>
+
+package "CLI 入口" as Entry {
+  [src/index.ts] as Index
+  [utils/controller.ts] as ControllerUtil
+}
+
+package "控制器层" as Controllers {
+  [controllers/git.ts] as GitCtrl
+  [controllers/gs.ts] as GsCtrl
+  [controllers/node.ts] as NodeCtrl
+  [controllers/souche.ts] as SoucheCtrl
+}
+
+package "服务层" as Services {
+  package "git" as GitSvc {
+    [clone.ts]
+    [pull.ts]
+    [push.ts]
+    [initAndPush.ts]
+    [pullAndMerge.ts]
+    [stash.ts]
+    [log.ts]
+    [status.ts]
+    [branch.ts]
+    [rebase.ts]
+  }
+  package "gs" as GsSvc {
+    [add.ts]
+    [list.ts]
+    [test.ts]
+    [use.ts]
+    [del.ts]
+    [current.ts]
+  }
+  package "node" as NodeSvc {
+    [install.ts]
+    [update.ts]
+    [run.ts]
+    [clean.ts]
+    [cache.ts]
+  }
+  package "souche" as SoucheSvc {
+    [deploy.ts]
+    [sync.ts]
+  }
+}
+
+package "工具层" as Utils {
+  [utils/exec.ts] as ExecUtil
+  [utils/git.ts] as GitUtil
+  [utils/node.ts] as NodeUtil
+  [utils/gs-config.ts] as GSConfigUtil
+  [utils/spinner.ts] as Spinner
+}
+
+package "外部" as External {
+  (SSH)
+  (Souche DevOps API)
+  (npm registry)
+}
+
+Index --> ControllerUtil : createController()
+Index --> GitCtrl : gitController()
+Index --> GsCtrl : gsController()
+Index --> NodeCtrl : nodeController()
+Index --> SoucheCtrl : soucheController()
+
+GitCtrl --> GitSvc : import
+GsCtrl --> GsSvc : import
+NodeCtrl --> NodeSvc : import
+SoucheCtrl --> SoucheSvc : import
+
+GitSvc --> ExecUtil : spawn/exec
+GitSvc --> GitUtil : hasGitRepo / selectFilesAndStage
+GitSvc --> NodeUtil : readPackageJson
+
+GsSvc --> ExecUtil
+GsSvc --> GSConfigUtil
+
+NodeSvc --> ExecUtil
+NodeSvc --> NodeUtil
+
+SoucheSvc --> ExecUtil
+SoucheSvc --> NodeUtil
+SoucheSvc --> GSConfigUtil
+
+ExecUtil --> (SSH) : spawn ssh
+ExecUtil --> (Souche DevOps API) : fetch
+ExecUtil --> (npm registry) : npm config
+
+@enduml

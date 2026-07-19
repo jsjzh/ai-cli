@@ -1,0 +1,53 @@
+@startuml
+!theme plain
+title <size:16><b>git pullAndMerge 流程</b></size>
+
+actor User
+participant "gitController" as Ctrl
+participant "pullAndMerge.ts" as Svc
+participant "pull.ts" as PullUtil
+participant "utils/exec.ts" as Exec
+database "git" as Git
+
+User -> Ctrl : cli git pullAndMerge
+Ctrl -> Svc : pullAndMerge()
+
+Svc -> PullUtil : getCurrentBranch()
+Svc -> Exec : git branch --format
+Exec -> Git : 获取所有本地分支
+Svc --> Svc : 过滤掉当前分支
+
+User <-> Svc : 输入关键词
+Svc --> Svc : 模糊匹配已有分支
+User <-> Svc : search-list 选择目标分支
+
+Svc -> Exec : git status --porcelain
+alt 有未提交更改
+  Svc -> Exec : spawn git stash
+end
+
+Svc -> Exec : spawn git checkout target
+Svc -> Exec : spawn git pull origin target
+Svc -> Exec : spawn git checkout original
+Svc -> Exec : git rev-parse HEAD (before)
+Svc -> Exec : spawn git merge target
+Svc -> Exec : git rev-parse HEAD (after)
+
+alt HEAD unchanged
+  Svc --> User : ⚠️ 无内容可合并
+else HEAD changed
+  User <-> Svc : 是否推送?
+  alt 推送
+    Svc -> Exec : spawn git push origin
+  else 不推送
+    Svc --> User : ⚠️ 记得手动推送
+  end
+end
+
+alt 之前 stash 了
+  Svc -> Exec : spawn git stash pop
+end
+
+Svc --> User : 完成 / 失败提示
+
+@enduml

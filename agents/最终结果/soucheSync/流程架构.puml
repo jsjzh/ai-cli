@@ -1,0 +1,50 @@
+@startuml
+!theme plain
+title <size:16><b>souche sync 流程</b></size>
+
+actor User
+participant "soucheController" as Ctrl
+participant "sync.ts" as Svc
+participant "utils/exec.ts" as Exec
+participant "utils/node.ts" as NodeUtil
+database "Shell / nvm" as Shell
+database "npm registry" as Registry
+
+User -> Ctrl : cli souche sync
+Ctrl -> Svc : sync()
+
+Svc -> Exec : npm config get registry
+Exec -> Registry : 记录当前 registry
+Registry --> Svc : originalRegistry
+
+Svc -> Exec : node --version
+Exec --> Svc : originalNode
+
+Svc -> NodeUtil : readPackageJson()
+NodeUtil --> Svc : dependencies + devDependencies
+
+alt 无依赖
+  Svc --> User : 提示退出
+else 有依赖
+  Svc -> Exec : exec bash 脚本
+  note right: source nvm.sh\nnvm use 12\n检测 snpm\nnpm config set registry\n分批 snpm sync &\nwait\n恢复 registry\n恢复 node 版本
+  Exec -> Shell : nvm use 12
+  Shell --> Exec : node@12
+  Exec -> Shell : command -v snpm
+  alt 不存在 snpm
+    Exec --> Svc : 报错退出
+  else 存在
+    Exec -> Shell : npm config set registry
+    Exec -> Shell : snpm sync pkg1 pkg2 ... &
+    loop 每批
+      Exec -> Shell : snpm sync batch
+    end
+    Exec -> Shell : wait
+    Exec -> Shell : npm config set registry (original)
+    Exec -> Shell : nvm use (original)
+  end
+end
+
+Svc --> User : ✔ 完成 / ✖ 失败
+
+@enduml
