@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { homedir } from 'os';
+import path from 'path';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import {
   getSSHDir,
@@ -29,15 +30,15 @@ describe('gs-config utilities', () => {
 
   describe('paths', () => {
     it('getSSHDir returns ~/.ssh', () => {
-      expect(getSSHDir()).toBe(`${homedir()}/.ssh`);
+      expect(getSSHDir()).toBe(path.join(homedir(), '.ssh'));
     });
 
     it('getConfigPath returns ~/.ssh/config', () => {
-      expect(getConfigPath()).toBe(`${homedir()}/.ssh/config`);
+      expect(getConfigPath()).toBe(path.join(homedir(), '.ssh', 'config'));
     });
 
     it('getGSConfigPath returns ~/.aiclirc', () => {
-      expect(getGSConfigPath()).toBe(`${homedir()}/.aiclirc`);
+      expect(getGSConfigPath()).toBe(path.join(homedir(), '.aiclirc'));
     });
   });
 

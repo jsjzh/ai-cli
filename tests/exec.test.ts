@@ -15,13 +15,13 @@ describe('exec', () => {
   });
 
   it('throws on non-zero exit', () => {
-    expect(() => exec('false')).toThrow();
+    expect(() => exec('node -e "process.exit(1)"')).toThrow();
   });
 });
 
 describe('spawn', () => {
   it('executes a command with args and returns Buffer', () => {
-    const result = spawn('echo', ['hello']);
+    const result = spawn('node', ['-e', 'console.log("hello")']);
     expect(Buffer.isBuffer(result)).toBe(true);
     expect(result.toString().trim()).toBe('hello');
   });
@@ -33,7 +33,7 @@ describe('spawn', () => {
   });
 
   it('throws on non-zero exit', () => {
-    expect(() => spawn('false', [])).toThrow();
+    expect(() => spawn('node', ['-e', 'process.exit(1)'])).toThrow();
   });
 });
 

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { existsSync } from 'fs';
+import path from 'path';
 
 vi.mock('fs', async () => {
   const actual = await vi.importActual('fs');
@@ -15,7 +16,7 @@ describe('hasGitRepo', () => {
     vi.mocked(existsSync).mockReturnValue(true);
     const { hasGitRepo } = await import('../src/utils/git');
     expect(hasGitRepo('/some/project')).toBe(true);
-    expect(existsSync).toHaveBeenCalledWith('/some/project/.git');
+    expect(existsSync).toHaveBeenCalledWith(path.join('/some/project', '.git'));
   });
 
   it('returns false when no .git directory', async () => {

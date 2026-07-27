@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0] - 2026-07-27
+
+### 架构优化
+
+- **跨平台兼容**: 全面适配 Windows 运行环境：
+  - `gs/add.ts`: SSH config `IdentityFile` 路径转前斜杠，避免 Windows 反斜杠导致解析歧义
+  - `tests/exec.test.ts`: `false`/`echo` 命令替换为 `node -e`，消除 Windows 无对应命令的问题
+  - `tests/gs-config.test.ts`、`tests/git.test.ts`: 路径断言改用 `path.join`，消除硬编码 `/` 分隔符
+
 ## [1.0.9] - 2026-07-19
 
 ### 功能补全

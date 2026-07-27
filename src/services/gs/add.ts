@@ -84,7 +84,7 @@ export default async function add() {
 Host ${answers.origin}
   HostName ${answers.host}
   User ${answers.username}
-  IdentityFile ${keyPath}
+  IdentityFile ${keyPath.replace(/\\/g, '/')}
 `;
   appendFileSync(configPath, sshConfigEntry);
 
