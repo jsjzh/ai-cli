@@ -5,7 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  inquirer-search-list: fb20df4fb6b942320c07ab66359c4757fddf94e17b330aaf933d74a0ba0e581e
+  inquirer-search-list:
+    hash: fb20df4fb6b942320c07ab66359c4757fddf94e17b330aaf933d74a0ba0e581e
+    path: patches/inquirer-search-list.patch
 
 importers:
 
@@ -2749,7 +2751,7 @@ snapshots:
 
   wrap-ansi@7.0.0:
     dependencies:
-      ansi-styles: 4.0.0
+      ansi-styles: 4.1.0
       string-width: 4.2.0
       strip-ansi: 6.0.1
 
