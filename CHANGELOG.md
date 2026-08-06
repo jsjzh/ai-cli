@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0] - 2026-08-06
+
+### 功能补全
+
+- **项目级 hook 机制**: 新增 `utils/hook.ts` 通用 hook runner，支持项目级 `.clihooks/` 钩子
+  - 命名规则: `pre-<command>` / `post-<command>`（如 `.clihooks/pre-git-pull`）
+  - hook 用 Node 执行（跨平台，Windows 兼容），通过 `git rev-parse --show-toplevel` 定位仓库根
+  - 执行前交互确认（默认 yes 回车即执行），失败仅提示不中断主命令
+- **git pull 接入 hook**: `pull.ts` 在拉取前执行 `pre-git-pull`、拉取成功后执行 `post-git-pull`，可用于 `git pull` 后自动 `uv sync` 等场景
+
 ## [1.1.0] - 2026-07-27
 
 ### 架构优化

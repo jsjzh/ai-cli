@@ -34,6 +34,21 @@ cli --version         # 查看版本
 | `branch`       | 创建分支（可选切换）或删除分支                           |
 | `rebase`       | 输入分支名匹配目标分支，自动暂存并执行变基               |
 
+#### 项目级 hook（`.clihooks/`）
+
+在项目根目录创建 `.clihooks/` 文件夹，可挂载 pre/post 钩子，随仓库共享到所有机器。
+
+- 命名规则: `pre-<命令>` / `post-<命令>`，用 Node 编写（跨平台）
+- 当前支持: `git pull` → `.clihooks/pre-git-pull` / `.clihooks/post-git-pull`
+- 执行前会交互确认（回车默认执行，输 n 跳过），失败仅提示不中断主命令
+
+```bash
+# 示例: .clihooks/post-git-pull —— git pull 后自动同步 Python 依赖
+#!/usr/bin/env node
+const { execSync } = require('child_process');
+try { execSync('uv sync', { stdio: 'inherit' }); } catch {}
+```
+
 ### gs - Git SSH 配置管理
 
 管理多套 Git SSH 身份（如个人、工作），每套配置独立密钥对。
