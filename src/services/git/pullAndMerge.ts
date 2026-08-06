@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import pc from 'picocolors';
 import { exec, spawn, getErrorMessage } from '../../utils/exec';
-import { getCurrentBranch } from './pull';
+import { getCurrentBranch } from '../../utils/git';
 export default async function pullAndMerge() {
   try {
     const originalBranch = getCurrentBranch();
@@ -103,5 +103,6 @@ export default async function pullAndMerge() {
     }
   } catch (error) {
     console.error(pc.red('\n✖ 操作失败:'), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

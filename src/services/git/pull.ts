@@ -1,10 +1,7 @@
 import pc from 'picocolors';
-import { exec, spawn, getErrorMessage } from '../../utils/exec';
+import { spawn, getErrorMessage } from '../../utils/exec';
+import { getCurrentBranch } from '../../utils/git';
 import { runHooks } from '../../utils/hook';
-
-export function getCurrentBranch(): string {
-  return exec('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
-}
 
 export default async function pull() {
   try {
@@ -18,5 +15,6 @@ export default async function pull() {
     await runHooks('git-pull', { phase: 'post' });
   } catch (error) {
     console.error(pc.red(`✖ 拉取失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

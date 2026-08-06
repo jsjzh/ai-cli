@@ -39,5 +39,6 @@ export default async function clean() {
     console.log(pc.green(`\n✔ 清除并重装完成`));
   } catch (error) {
     console.error(pc.red(`\n✖ 操作失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

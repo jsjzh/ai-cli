@@ -49,5 +49,6 @@ echo "已恢复 Node 版本: ${nodeVersion}"
     exec(`bash -c '${script}'`, { stdio: 'inherit' });
   } catch (error) {
     console.error(`\n操作失败:`, getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

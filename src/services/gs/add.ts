@@ -74,6 +74,7 @@ export default async function add() {
     spawn('ssh-keygen', sshKeygenArgs, { stdio: 'inherit' });
   } catch (error) {
     console.error(pc.red('✖ 生成密钥失败:'), getErrorMessage(error));
+    process.exitCode = 1;
     return;
   }
 

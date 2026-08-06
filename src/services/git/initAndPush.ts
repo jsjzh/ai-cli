@@ -1,8 +1,7 @@
 import inquirer from 'inquirer';
 import pc from 'picocolors';
 import { spawn, getErrorMessage } from '../../utils/exec';
-import { hasGitRepo, selectFilesAndStage } from '../../utils/git';
-import { commitTypes } from './push';
+import { hasGitRepo, selectFilesAndStage, commitTypes } from '../../utils/git';
 
 export default async function initAndPush() {
   try {
@@ -81,5 +80,6 @@ export default async function initAndPush() {
     console.log(pc.green(`\n✔ 推送成功，分支为: ${answers.branch}，提交内容为：${commitMessage}`));
   } catch (error) {
     console.error(pc.red(`\n✖ 操作失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

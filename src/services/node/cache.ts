@@ -34,5 +34,6 @@ export default async function cache() {
     console.log(pc.green(`\n✔ 缓存清理完成`));
   } catch (error) {
     console.error(pc.red(`\n✖ 缓存清理失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

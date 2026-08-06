@@ -55,5 +55,6 @@ export default async function clone() {
     console.log(pc.green(`\n✔ 克隆成功！接下来可以执行: cd ${projectName}`));
   } catch (error) {
     console.error(pc.red(`\n✖ 克隆失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

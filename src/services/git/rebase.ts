@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import pc from 'picocolors';
 import { exec, spawn, getErrorMessage } from '../../utils/exec';
-import { getCurrentBranch } from './pull';
+import { getCurrentBranch } from '../../utils/git';
 export default async function rebase() {
   try {
     const currentBranch = getCurrentBranch();
@@ -60,5 +60,6 @@ export default async function rebase() {
     console.log(pc.green(`\n✔ 变基完成: ${currentBranch} 已基于 ${targetBranch}`));
   } catch (error) {
     console.error(pc.red(`\n✖ 变基失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

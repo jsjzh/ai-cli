@@ -13,5 +13,6 @@ export default async function install() {
     console.log(pc.green(`\n✔ 依赖安装完成`));
   } catch (error) {
     console.error(pc.red(`\n✖ 安装失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

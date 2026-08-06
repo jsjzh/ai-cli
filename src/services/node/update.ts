@@ -38,5 +38,6 @@ export default async function update() {
     console.log(pc.green(`\n✔ 依赖更新完成`));
   } catch (error) {
     console.error(pc.red(`\n✖ 更新失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

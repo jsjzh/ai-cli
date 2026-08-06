@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.1] - 2026-08-06
+
+### 架构优化
+
+- **服务间解耦**: 消除 `services/git/` 内 4 处跨服务引用，所有命令自实现不再互相调用：
+  - `push.ts`: 不再调用 `pull()`，改为内联 `git pull`（避免触发 `git-pull` hook），`getCurrentBranch`/`commitTypes` 迁至 `utils/git.ts`
+  - `rebase.ts`、`pullAndMerge.ts`: `getCurrentBranch` 改从 `utils/git.ts` 导入
+  - `initAndPush.ts`: `commitTypes` 改从 `utils/git.ts` 导入
+  - `pull.ts`: 拉取失败时设置 `process.exitCode = 1`，修复失败仍返回 0 的静默问题
+  - **失败退出码统一**: 所有命令失败统一非零退出（`process.exitCode = 1`）：`push`/`clone`/`stash`/`rebase`/`pullAndMerge`/`initAndPush`/`add`/`use`/`install`/`update`/`clean`/`cache`/`deploy`/`sync` 的失败 catch 均补充退出码，`index.ts` 顶层 catch 兜底未捕获异常
+
 ## [1.2.0] - 2026-08-06
 
 ### 功能补全

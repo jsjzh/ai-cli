@@ -197,5 +197,6 @@ export default async function deploy() {
     }
   } catch (error) {
     console.error(pc.red(`\n✖ 部署失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

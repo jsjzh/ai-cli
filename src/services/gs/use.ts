@@ -56,5 +56,6 @@ export default async function use() {
     console.log(`  user.email = ${config.useremail}`);
   } catch (error) {
     console.error(pc.red(`✖ 设置失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

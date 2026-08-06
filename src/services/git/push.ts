@@ -1,24 +1,7 @@
 import inquirer from 'inquirer';
 import pc from 'picocolors';
 import { exec, spawn, getErrorMessage } from '../../utils/exec';
-import { selectFilesAndStage } from '../../utils/git';
-import pull, { getCurrentBranch } from './pull';
-
-export const commitTypes = [
-  { name: '1. feat: 新功能、新特性', value: 'feat' },
-  { name: '2. fix: 修改 bug', value: 'fix' },
-  { name: '3. perf: 更改代码，以提高性能', value: 'perf' },
-  { name: '4. refactor: 代码重构', value: 'refactor' },
-  { name: '5. docs: 文档修改', value: 'docs' },
-  { name: '6. style: 代码格式修改, 注意不是 css 修改', value: 'style' },
-  { name: '7. test: 测试用例新增、修改', value: 'test' },
-  { name: '8. build: 影响项目构建或依赖项修改', value: 'build' },
-  { name: '9. revert: 恢复上一次提交', value: 'revert' },
-  { name: '10. ci: 持续集成相关文件修改', value: 'ci' },
-  { name: '11. chore: 其他修改', value: 'chore' },
-  { name: '12. release: 发布新版本', value: 'release' },
-  { name: '13. workflow: 工作流相关文件修改', value: 'workflow' },
-];
+import { selectFilesAndStage, getCurrentBranch, commitTypes } from '../../utils/git';
 
 function hasRemoteBranch(branch: string): boolean {
   try {
@@ -37,7 +20,7 @@ export default async function push() {
     if (remoteExists) {
       console.log(pc.cyan('▶ 正在拉取远程更新...'));
       try {
-        await pull();
+        spawn('git', ['pull', 'origin', branch], { stdio: ['ignore', 'inherit', 'inherit'] });
       } catch {
         console.error(pc.red('✖ 自动合并失败，请手动解决冲突后重试'));
         return;
@@ -151,5 +134,6 @@ export default async function push() {
     console.log(pc.green(`\n✔ branch ${branch} 提交成功，提交内容为：${commitMessage}`));
   } catch (error) {
     console.error(pc.red(`\n✖ 操作失败:`), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }

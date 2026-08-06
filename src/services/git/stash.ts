@@ -86,5 +86,6 @@ export default async function stash() {
     }
   } catch (error) {
     console.error(pc.red('\n操作失败:'), getErrorMessage(error));
+    process.exitCode = 1;
   }
 }
