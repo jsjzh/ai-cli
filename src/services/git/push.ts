@@ -52,6 +52,9 @@ export default async function push() {
       return;
     }
 
+    console.log(pc.bold(pc.cyan('\n当前变更内容:\n')));
+    console.log(exec('git status', { encoding: 'utf8' }));
+
     if (hasStaged && !hasUnstaged) {
       console.log(pc.cyan('▶ 检测到已暂存的变更，直接提交推送...'));
       const { content, type } = await inquirer.prompt([

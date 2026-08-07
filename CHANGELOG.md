@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2] - 2026-08-07
+
+### 功能补全
+
+- **git push**: 进入提交交互前先输出 `git status` 展示当前变更内容，方便输入提交信息前确认改动范围（工作区干净时仍直接推送，不额外输出）
+- **post-git-pull 钩子**: 项目自身 `.clihooks/post-git-pull` 改为 `pnpm install` + `pnpm run build`，git pull 后自动同步依赖并重新构建（替换原先不适用于本项目的 `uv sync`）
+
 ## [1.2.1] - 2026-08-06
 
 ### 架构优化

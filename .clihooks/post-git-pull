@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+const { execSync } = require('child_process');
+
+const cwd = __dirname + '/..';
+
+try {
+  execSync('pnpm install', { stdio: 'inherit', cwd });
+} catch {
+  console.error('✖ pnpm install failed');
+}
+
+try {
+  execSync('pnpm run build', { stdio: 'inherit', cwd });
+} catch {
+  console.error('✖ build failed');
+}
