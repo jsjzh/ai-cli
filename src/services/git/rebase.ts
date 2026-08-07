@@ -2,6 +2,16 @@ import inquirer from 'inquirer';
 import pc from 'picocolors';
 import { exec, spawn, getErrorMessage } from '../../utils/exec';
 import { getCurrentBranch } from '../../utils/git';
+
+function restoreStash(): void {
+  try {
+    spawn('git', ['stash', 'pop'], { stdio: ['ignore', 'inherit', 'inherit'] });
+  } catch {
+    process.exitCode = 1;
+    console.error(pc.yellow('恢复暂存失败，你的更改仍保存在 stash 中，请手动执行 git stash pop'));
+  }
+}
+
 export default async function rebase() {
   try {
     const currentBranch = getCurrentBranch();
@@ -50,11 +60,22 @@ export default async function rebase() {
     }
 
     console.log(pc.cyan(`▶ 正在变基: ${currentBranch} -> ${targetBranch}`));
-    spawn('git', ['rebase', targetBranch], { stdio: 'inherit' });
+    try {
+      spawn('git', ['rebase', targetBranch], { stdio: 'inherit' });
+    } catch (rebaseError) {
+      console.error(pc.red('\n✖ 变基失败，正在回滚变基并恢复暂存的更改...'));
+      try {
+        spawn('git', ['rebase', '--abort'], { stdio: ['ignore', 'inherit', 'inherit'] });
+      } catch {
+        // 变基未处于进行中时忽略 abort 失败
+      }
+      if (hasChanges) restoreStash();
+      throw rebaseError;
+    }
 
     if (hasChanges) {
       console.log(pc.cyan('▶ 正在恢复暂存的更改...'));
-      spawn('git', ['stash', 'pop'], { stdio: 'inherit' });
+      restoreStash();
     }
 
     console.log(pc.green(`\n✔ 变基完成: ${currentBranch} 已基于 ${targetBranch}`));

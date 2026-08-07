@@ -98,7 +98,24 @@ export default async function pullAndMerge() {
     } finally {
       if (stashed) {
         console.log(pc.cyan('▶ 正在恢复暂存的更改...'));
-        spawn('git', ['stash', 'pop'], { stdio: 'inherit' });
+        const branch = getCurrentBranch();
+        if (branch === originalBranch) {
+          try {
+            spawn('git', ['stash', 'pop'], { stdio: ['ignore', 'inherit', 'inherit'] });
+          } catch {
+            process.exitCode = 1;
+            console.error(
+              pc.yellow('恢复暂存失败，你的更改仍保存在 stash 中，请手动执行 git stash pop'),
+            );
+          }
+        } else {
+          process.exitCode = 1;
+          console.error(
+            pc.yellow(
+              `当前分支为 ${branch}，未自动恢复暂存。请手动执行 git checkout ${originalBranch} && git stash pop`,
+            ),
+          );
+        }
       }
     }
   } catch (error) {
