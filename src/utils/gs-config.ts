@@ -29,7 +29,7 @@ export function getGSConfigPath(): string {
   return AICLIRC_PATH;
 }
 
-function readAiclirc(): Record<string, unknown> {
+export function readAiclirc(): Record<string, unknown> {
   if (!existsSync(AICLIRC_PATH)) return {};
   try {
     return JSON.parse(readFileSync(AICLIRC_PATH, 'utf8'));
@@ -39,7 +39,7 @@ function readAiclirc(): Record<string, unknown> {
   }
 }
 
-function writeAiclirc(config: Record<string, unknown>): void {
+export function writeAiclirc(config: Record<string, unknown>): void {
   writeFileSync(AICLIRC_PATH, JSON.stringify(config, null, 2));
 }
 

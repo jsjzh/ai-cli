@@ -81,9 +81,19 @@ try { execSync('uv sync', { stdio: 'inherit' }); } catch {}
 | `deploy` | 交互式选择应用/流水线/分支，触发 Souche DevOps 构建部署       |
 | `sync`   | 分批同步 package.json 中的依赖到内部 npm 仓库，自动切换 Node 版本 |
 
+### stats - 调用统计
+
+记录本机 `cli` 的历史调用次数（总数 + 各命令明细）。
+
+| 命令    | 说明                     |
+| ------- | ------------------------ |
+| `stats` | 查看本机累计调用次数明细 |
+
+> 计数自本功能上线后开始累计，此前的调用无法回溯。
+
 ## 数据存储
 
-- CLI 全局配置：`~/.aiclirc`（含 SSH 配置、Deploy token/绑定等）
+- CLI 全局配置：`~/.aiclirc`（含 SSH 配置、Deploy token/绑定、调用统计等）
 - SSH 密钥文件：`~/.ssh/`
 - SSH 客户端配置：`~/.ssh/config`
 

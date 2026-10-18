@@ -6,6 +6,7 @@ import gitController from './controllers/git';
 import gsController from './controllers/gs';
 import nodeController from './controllers/node';
 import soucheController from './controllers/souche';
+import { bumpStats, showStats } from './utils/stats';
 import { version } from '../package.json';
 
 inquirer.registerPrompt('search-list', SearchList);
@@ -17,6 +18,7 @@ const HELP = `用法: cli [command] [subcommand]
   gs         Git SSH 配置管理 (add / list / test / use / del / current)
   node       Node.js 包管理 (run / install / update / clean / cache)
   souche     内部工具 (deploy / sync)
+  stats      查看本机调用统计
 
 选项:
   --help, -h  显示帮助信息
@@ -91,6 +93,7 @@ const COMMAND_HELP: Record<string, string> = {
 
 async function main() {
   const args = process.argv.slice(2);
+  bumpStats(args.find((a) => !a.startsWith('-')) ?? 'menu');
 
   if (args.includes('--version') || args.includes('-v')) {
     console.log(`v${version}`);
@@ -128,6 +131,9 @@ async function main() {
         return;
       case 'souche':
         await soucheController(subcommand);
+        return;
+      case 'stats':
+        showStats();
         return;
       default:
         console.log(`未知命令: ${command}\n`);
