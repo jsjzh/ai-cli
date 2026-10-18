@@ -91,6 +91,15 @@ try { execSync('uv sync', { stdio: 'inherit' }); } catch {}
 
 > 计数自本功能上线后开始累计，此前的调用无法回溯。
 
+### skills - 能力沉淀
+
+仓库 `skills/` 目录存放可独立执行的能力（agent skill 格式，`<name>/SKILL.md`），不依赖 cli，可直接对外提供。将对应目录软链或拷贝到 `.opencode/skills/`（项目级）或 `~/.config/opencode/skills/`（全局）即可被 agent 加载。
+
+| Skill           | 说明                                                        |
+| --------------- | ----------------------------------------------------------- |
+| `souche-deploy` | 通过 DevOps HTTP 接口触发 Souche 项目构建部署（纯 curl 流程）|
+| `souche-sync`   | 把依赖同步到 Souche 内部 npm 源（纯 bash 流程）              |
+
 ## 数据存储
 
 - CLI 全局配置：`~/.aiclirc`（含 SSH 配置、Deploy token/绑定、调用统计等）
